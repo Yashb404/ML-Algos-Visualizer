@@ -1,0 +1,72 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Linear Regression - ML Visualizer</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <!-- Plotly.js -->
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <!-- TensorFlow.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.15.0/dist/tf.min.js"></script>
+    <style>
+        .controls {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: #2d2d2d;
+            border-radius: 8px;
+        }
+
+        button {
+            background-color: var(--accent-color);
+            color: #000;
+            border: none;
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+        }
+
+        button:hover {
+            opacity: 0.9;
+        }
+
+        button:disabled {
+            background-color: #555;
+            cursor: not-allowed;
+        }
+
+        #plot {
+            width: 100%;
+            height: 500px;
+            background-color: #1e1e1e;
+            /* Match theme */
+        }
+    </style>
+</head>
+
+<body>
+    <aside class="sidebar">
+        <h1>ML Viz</h1>
+        <ul class="nav-links">
+            <li><a href="/">Home</a></li>
+            <li><a href="linear-regression.html" style="background-color: #3d3d3d;">Linear Regression</a></li>
+        </ul>
+    </aside>
+    <main class="main-content">
+        <div class="card">
+            <h2>Linear Regression</h2>
+            <div id="plot"></div>
+            <div class="controls">
+                <button id="trainBtn">Start Training</button>
+                <span id="status" style="margin-left: 1rem; color: #888;">Ready</span>
+                <span id="loss" style="margin-left: 1rem;"></span>
+            </div>
+        </div>
+    </main>
+    <script src="../js/algorithms/linear-regression.js"></script>
+</body>
+
+</html>

@@ -15,10 +15,16 @@ The project focuses on clarity and explainability: each module is isolated, visu
 ## Implemented Visualizers
 
 - Linear Regression
+- Multiple Linear Regression
 - Logistic Regression (binary classification sigmoid training)
 - K-Nearest Neighbors (distance-based classification)
+- Naive Bayes (probabilistic classification)
+- Decision Tree (step-wise feature splits)
+- Support Vector Machine (max-margin separator)
 - Random Forest (ensemble-style boundary simulation)
+- AdaBoost (iterative weak learner weighting)
 - K-Means Clustering (iterative centroid updates with selectable $k$)
+- Hierarchical Clustering (agglomerative merge process)
 
 ## Project Structure
 
@@ -73,10 +79,16 @@ npm run dev
 Examples:
 
 - `/algorithms/linear-regression.html`
+- `/algorithms/multiple-linear-regression.html`
 - `/algorithms/logistic-regression.html`
 - `/algorithms/knn.html`
+- `/algorithms/naive-bayes.html`
+- `/algorithms/decision-tree.html`
+- `/algorithms/svm.html`
 - `/algorithms/random-forest.html`
+- `/algorithms/adaboost.html`
 - `/algorithms/k-means.html`
+- `/algorithms/hierarchical-clustering.html`
 
 ## Technology Stack
 

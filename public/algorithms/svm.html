@@ -4,18 +4,15 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Linear Regression - ML Visualizer</title>
+    <title>SVM - ML Visualizer</title>
     <link rel="stylesheet" href="../css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-    <!-- Plotly.js -->
     <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
-    <!-- TensorFlow.js -->
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.15.0/dist/tf.min.js"></script>
     <style>
         .controls {
             margin-top: 1rem;
             padding: 1rem;
-            background: #2d2d2d;
+            background: var(--secondary-bg);
             border-radius: 8px;
         }
 
@@ -29,20 +26,10 @@
             font-weight: 600;
         }
 
-        button:hover {
-            opacity: 0.9;
-        }
-
-        button:disabled {
-            background-color: #555;
-            cursor: not-allowed;
-        }
-
         #plot {
             width: 100%;
             height: 500px;
             background-color: #1e1e1e;
-            /* Match theme */
         }
     </style>
 </head>
@@ -52,35 +39,36 @@
         <h1>ML Viz</h1>
         <ul class="nav-links">
             <li><a href="/">Home</a></li>
-            <li><a href="linear-regression.html" style="background-color: #3d3d3d;">Linear Regression</a></li>
+            <li><a href="linear-regression.html">Linear Regression</a></li>
             <li><a href="multiple-linear-regression.html">Multiple Linear Regression</a></li>
             <li><a href="logistic-regression.html">Logistic Regression</a></li>
             <li><a href="knn.html">K-Nearest Neighbors</a></li>
             <li><a href="naive-bayes.html">Naive Bayes</a></li>
             <li><a href="decision-tree.html">Decision Tree</a></li>
-            <li><a href="svm.html">Support Vector Machine</a></li>
+            <li><a href="svm.html" style="background-color: #3d3d3d;">Support Vector Machine</a></li>
             <li><a href="random-forest.html">Random Forest</a></li>
             <li><a href="adaboost.html">AdaBoost</a></li>
             <li><a href="k-means.html">K-Means Clustering</a></li>
             <li><a href="hierarchical-clustering.html">Hierarchical Clustering</a></li>
         </ul>
     </aside>
+
     <main class="main-content">
         <div class="card">
-            <h2>Linear Regression</h2>
+            <h2>Support Vector Machine (Linear)</h2>
             <div class="info-panel">
-                <h3>What is happening here? (Lab-04)</h3>
-                <p>Simple Linear Regression models the relationship between a single feature X and target Y using y = b0 + b1x. During training, the optimizer updates b0 and b1 to minimize Mean Squared Error, so the plotted line gradually aligns with the data trend.</p>
+                <h3>What is happening here? (Lab-06)</h3>
+                <p>SVM searches for a separating hyperplane with maximum margin between classes. The central line is the decision boundary and the two dashed lines represent margins. A wider margin generally improves generalization.</p>
             </div>
             <div id="plot"></div>
             <div class="controls">
-                <button id="trainBtn">Start Training</button>
+                <button id="fitBtn">Fit Max-Margin Boundary</button>
                 <span id="status" style="margin-left: 1rem; color: #888;">Ready</span>
-                <span id="loss" style="margin-left: 1rem;"></span>
             </div>
         </div>
     </main>
-    <script src="../js/algorithms/linear-regression.js"></script>
+
+    <script src="../js/algorithms/svm.js"></script>
 </body>
 
 </html>

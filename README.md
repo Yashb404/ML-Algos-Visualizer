@@ -1,48 +1,100 @@
-# Open Source ML Visualizer
+# ML Algos Visualizer
 
-A modular, web-based visualization tool for Machine Learning algorithms.
-Built with Node.js (Express), Vanilla JS, and TensorFlow.js.
+An interactive, browser-first machine learning playground that demonstrates how core algorithms behave step-by-step.
 
-## Features
+The project focuses on clarity and explainability: each module is isolated, visual, and easy to extend without changing backend logic.
 
-- **Interactive Visualizations**: Real-time graphing with Plotly.js/Chart.js.
-- **In-Browser Training**: Machine Learning models run entirely in the browser using TensorFlow.js.
-- **Modular Architecture**: Easy to add new algorithms.
-- **Dark Mode**: Hacker/IDE themed UI.
+## Highlights
 
-## Getting Started
+- Interactive algorithm pages with real-time plotting.
+- In-browser model training (TensorFlow.js) where applicable.
+- Step-wise simulation flows for algorithm internals (for example, assignment/update loops in K-Means).
+- Simple Express static server for fast local development.
+- Modular file structure designed for adding new visualizers quickly.
+
+## Implemented Visualizers
+
+- Linear Regression
+- Logistic Regression (binary classification sigmoid training)
+- K-Nearest Neighbors (distance-based classification)
+- Random Forest (ensemble-style boundary simulation)
+- K-Means Clustering (iterative centroid updates with selectable $k$)
+
+## Project Structure
+
+```text
+ML-Algos-Visualizer/
+    public/
+        index.html
+        css/
+            style.css
+        algorithms/
+            *.html                # One view per algorithm
+        js/
+            main.js
+            algorithms/
+                *.js                # Logic per algorithm
+    server.js                 # Express static server
+    package.json
+```
+
+## Quick Start
 
 ### Prerequisites
 
-- Node.js installed
+- Node.js 14+
+- npm
 
-### Installation
+### Install
 
-1. Clone the repository (if applicable)
-2. Install dependencies:
+```bash
+npm install
+```
 
-    ```bash
-    npm install
-    ```
+### Run
 
-3. Start the server:
+```bash
+npm start
+```
 
-    ```bash
-    npm start
-    ```
+Open <http://localhost:3000>.
 
-4. Open [http://localhost:3000](http://localhost:3000) in your browser.
+For development with auto-restart:
 
-## Available Algorithms
+```bash
+npm run dev
+```
 
-- **Linear Regression**: Visualize simple linear regression training on a 2D dataset.
+## Routing
 
-## Tech Stack
+- Home: `/`
+- Algorithm pages: `/algorithms/<name>.html`
 
-- **Backend**: Express.js
-- **Frontend**: HTML5, CSS3, Vanilla JavaScript
-- **ML Library**: TensorFlow.js
-- **Visualization**: Plotly.js
+Examples:
+
+- `/algorithms/linear-regression.html`
+- `/algorithms/logistic-regression.html`
+- `/algorithms/knn.html`
+- `/algorithms/random-forest.html`
+- `/algorithms/k-means.html`
+
+## Technology Stack
+
+- Backend: Express.js
+- Frontend: HTML, CSS, Vanilla JavaScript
+- Visualization: Plotly.js
+- ML Runtime (selected modules): TensorFlow.js
+
+## Extending the Project
+
+To add a new algorithm module:
+
+1. Add an HTML view under `public/algorithms/`.
+2. Add a JS logic file under `public/js/algorithms/`.
+3. Connect the view to its script.
+4. Add navigation links where needed.
+
+Detailed contribution guidance is available in `CONTRIBUTING.md`.
 
 ## License
 

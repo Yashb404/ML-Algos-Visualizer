@@ -4,45 +4,33 @@
 <head>
     <meta charset="UTF-8">
     <meta name="viewport" content="width=device-width, initial-scale=1.0">
-    <title>Linear Regression - ML Visualizer</title>
+    <title>KNN - ML Visualizer</title>
     <link rel="stylesheet" href="../css/style.css">
     <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
-    <!-- Plotly.js -->
     <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
-    <!-- TensorFlow.js -->
-    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.15.0/dist/tf.min.js"></script>
     <style>
         .controls {
             margin-top: 1rem;
             padding: 1rem;
-            background: #2d2d2d;
+            background: var(--secondary-bg);
             border-radius: 8px;
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
         }
 
-        button {
-            background-color: var(--accent-color);
-            color: #000;
-            border: none;
-            padding: 0.5rem 1rem;
+        input {
+            padding: 0.5rem;
             border-radius: 4px;
-            cursor: pointer;
-            font-weight: 600;
-        }
-
-        button:hover {
-            opacity: 0.9;
-        }
-
-        button:disabled {
-            background-color: #555;
-            cursor: not-allowed;
+            border: none;
+            width: 60px;
         }
 
         #plot {
             width: 100%;
             height: 500px;
             background-color: #1e1e1e;
-            /* Match theme */
         }
     </style>
 </head>
@@ -52,25 +40,26 @@
         <h1>ML Viz</h1>
         <ul class="nav-links">
             <li><a href="/">Home</a></li>
-            <li><a href="linear-regression.html" style="background-color: #3d3d3d;">Linear Regression</a></li>
+            <li><a href="linear-regression.html">Linear Regression</a></li>
             <li><a href="logistic-regression.html">Logistic Regression</a></li>
-            <li><a href="knn.html">K-Nearest Neighbors</a></li>
+            <li><a href="knn.html" style="background-color: #3d3d3d;">K-Nearest Neighbors</a></li>
             <li><a href="random-forest.html">Random Forest</a></li>
             <li><a href="k-means.html">K-Means Clustering</a></li>
         </ul>
     </aside>
     <main class="main-content">
         <div class="card">
-            <h2>Linear Regression</h2>
+            <h2>K-Nearest Neighbors (KNN)</h2>
+            <p style="color: #aaa;">The central star is a new point. Click classify to connect it to its nearest neighbors.</p>
             <div id="plot"></div>
             <div class="controls">
-                <button id="trainBtn">Start Training</button>
-                <span id="status" style="margin-left: 1rem; color: #888;">Ready</span>
-                <span id="loss" style="margin-left: 1rem;"></span>
+                <label for="kInput">Set K Value:</label>
+                <input type="number" id="kInput" value="3" min="1" max="15">
+                <button id="classifyBtn" style="background-color: var(--accent-color); padding: 0.5rem; border-radius: 4px; border: none; font-weight: bold; cursor: pointer;">Classify Center Point</button>
             </div>
         </div>
     </main>
-    <script src="../js/algorithms/linear-regression.js"></script>
+    <script src="../js/algorithms/knn.js"></script>
 </body>
 
 </html>

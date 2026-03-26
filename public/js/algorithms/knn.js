@@ -1,0 +1,90 @@
+const points = [];
+for (let i = 0; i < 30; i++) {
+    points.push({ x: 2 + Math.random() * 3, y: 2 + Math.random() * 3, class: 0 });
+}
+for (let i = 0; i < 30; i++) {
+    points.push({ x: 6 + Math.random() * 3, y: 6 + Math.random() * 3, class: 1 });
+}
+
+const targetPoint = { x: 5, y: 5 };
+
+const layout = {
+    title: "KNN Classification",
+    paper_bgcolor: "#1e1e1e",
+    plot_bgcolor: "#1e1e1e",
+    font: { color: "#e0e0e0" },
+    xaxis: { range: [0, 10], showgrid: true, gridcolor: "#444" },
+    yaxis: { range: [0, 10], showgrid: true, gridcolor: "#444" }
+};
+
+function buildBaseTraces() {
+    return [
+        {
+            x: points.filter((p) => p.class === 0).map((p) => p.x),
+            y: points.filter((p) => p.class === 0).map((p) => p.y),
+            mode: "markers",
+            name: "Class 0",
+            marker: { color: "#ff4081", size: 10 }
+        },
+        {
+            x: points.filter((p) => p.class === 1).map((p) => p.x),
+            y: points.filter((p) => p.class === 1).map((p) => p.y),
+            mode: "markers",
+            name: "Class 1",
+            marker: { color: "#00bcd4", size: 10 }
+        },
+        {
+            x: [targetPoint.x],
+            y: [targetPoint.y],
+            mode: "markers",
+            name: "Target",
+            marker: { color: "#fff", size: 15, symbol: "star" }
+        }
+    ];
+}
+
+function render() {
+    Plotly.newPlot("plot", buildBaseTraces(), layout);
+}
+
+render();
+
+document.getElementById("classifyBtn").addEventListener("click", () => {
+    const kInput = parseInt(document.getElementById("kInput").value, 10);
+    const k = Math.max(1, Math.min(points.length, kInput || 1));
+
+    const sorted = points
+        .map((p) => ({ ...p, dist: Math.sqrt((p.x - targetPoint.x) ** 2 + (p.y - targetPoint.y) ** 2) }))
+        .sort((a, b) => a.dist - b.dist);
+
+    const neighbors = sorted.slice(0, k);
+    const classVotes = neighbors.reduce((acc, item) => {
+        acc[item.class] = (acc[item.class] || 0) + 1;
+        return acc;
+    }, {});
+
+    const predictedClass = (classVotes[1] || 0) > (classVotes[0] || 0) ? 1 : 0;
+    const lineColor = predictedClass === 1 ? "#00bcd4" : "#ff4081";
+
+    const neighborLines = neighbors.map((neighbor) => ({
+        x: [targetPoint.x, neighbor.x],
+        y: [targetPoint.y, neighbor.y],
+        mode: "lines",
+        showlegend: false,
+        line: { color: "#e0e0e0", dash: "dot", width: 2 }
+    }));
+
+    const traces = [
+        ...buildBaseTraces(),
+        {
+            x: [targetPoint.x],
+            y: [targetPoint.y],
+            mode: "markers",
+            name: `Predicted Class: ${predictedClass}`,
+            marker: { color: lineColor, size: 18, symbol: "star", line: { color: "white", width: 1 } }
+        },
+        ...neighborLines
+    ];
+
+    Plotly.react("plot", traces, layout);
+});

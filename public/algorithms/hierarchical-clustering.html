@@ -12,8 +12,8 @@
         .controls {
             margin-top: 1rem;
             padding: 1rem;
-            background: var(--secondary-bg);
-            border-radius: 8px;
+            background: #ffffff;
+            border: 2px solid #000000;
             display: flex;
             gap: 0.75rem;
             align-items: center;
@@ -21,20 +21,31 @@
         }
 
         button {
-            background-color: var(--accent-color);
-            color: #000;
-            border: none;
+            background-color: #ffffff;
+            color: #000000;
+            border: 2px solid #000000;
             padding: 0.5rem 1rem;
-            border-radius: 4px;
             cursor: pointer;
             font-weight: 600;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        button:hover {
+            background-color: #000000;
+            color: #ffffff;
         }
 
         #plot {
             width: 100%;
             height: 520px;
-            background-color: #1e1e1e;
+            background-color: #ffffff;
+            border: 2px solid #000000;
         }
+
+        span {
+            font-family: 'Courier New', Courier, monospace;
+        }
+    </style>
     </style>
 </head>
 
@@ -53,7 +64,7 @@
             <li><a href="random-forest.html">Random Forest</a></li>
             <li><a href="adaboost.html">AdaBoost</a></li>
             <li><a href="k-means.html">K-Means Clustering</a></li>
-            <li><a href="hierarchical-clustering.html" style="background-color: #3d3d3d;">Hierarchical Clustering</a></li>
+            <li><a href="hierarchical-clustering.html" class="active">Hierarchical Clustering</a></li>
         </ul>
     </aside>
 
@@ -68,7 +79,7 @@
             <div class="controls">
                 <button id="stepBtn">Merge Step</button>
                 <button id="resetBtn">Reset</button>
-                <span id="status" style="color: #888;">Clusters: 12</span>
+                <span id="status">Clusters: 12</span>
             </div>
         </div>
     </main>

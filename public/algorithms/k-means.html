@@ -12,8 +12,8 @@
         .controls {
             margin-top: 1rem;
             padding: 1rem;
-            background: var(--secondary-bg);
-            border-radius: 8px;
+            background: #ffffff;
+            border: 2px solid #000000;
             display: flex;
             gap: 1rem;
             align-items: center;
@@ -22,34 +22,40 @@
 
         button,
         select {
-            background-color: var(--accent-color);
-            color: #000;
-            border: none;
+            background-color: #ffffff;
+            color: #000000;
+            border: 2px solid #000000;
             padding: 0.5rem 1rem;
-            border-radius: 4px;
             cursor: pointer;
             font-weight: 600;
-            font-family: 'Inter', sans-serif;
+            font-family: 'Courier New', Courier, monospace;
         }
 
         button:hover,
         select:hover {
-            opacity: 0.9;
+            background-color: #000000;
+            color: #ffffff;
         }
 
         button:disabled {
-            background-color: #555;
+            background-color: #cccccc;
+            color: #000000;
             cursor: not-allowed;
-        }
-
-        select {
-            background-color: #fff;
         }
 
         #plot {
             width: 100%;
             height: 550px;
-            background-color: var(--bg-color);
+            background-color: #ffffff;
+            border: 2px solid #000000;
+        }
+
+        label {
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        span {
+            font-family: 'Courier New', Courier, monospace;
         }
     </style>
 </head>
@@ -68,7 +74,7 @@
             <li><a href="svm.html">Support Vector Machine</a></li>
             <li><a href="random-forest.html">Random Forest</a></li>
             <li><a href="adaboost.html">AdaBoost</a></li>
-            <li><a href="k-means.html" style="background-color: #3d3d3d;">K-Means Clustering</a></li>
+            <li><a href="k-means.html" class="active">K-Means Clustering</a></li>
             <li><a href="hierarchical-clustering.html">Hierarchical Clustering</a></li>
         </ul>
     </aside>
@@ -79,10 +85,10 @@
                 <h3>What is happening here?</h3>
                 <p>K-Means alternates between assigning each point to its nearest centroid and updating centroids to the mean of assigned points. Repeat this for k = 2, 3, and 4 to compare how cluster compactness and separation change with the number of groups.</p>
             </div>
-            <p style="color: #aaa; margin-bottom: 1rem;">Visualizing Petal Length vs Petal Width. Notice how the clusters form based on the selected K value.</p>
+            <p>Visualizing Petal Length vs Petal Width. Notice how the clusters form based on the selected K value.</p>
             <div id="plot"></div>
             <div class="controls">
-                <label for="kValue" style="font-weight: 600;">Select K:</label>
+                <label for="kValue">Select K:</label>
                 <select id="kValue">
                     <option value="2">K = 2</option>
                     <option value="3" selected>K = 3 (Actual Iris Species)</option>
@@ -91,7 +97,7 @@
                 <button id="initBtn">Initialize</button>
                 <button id="stepBtn" disabled>Step (Assign &amp; Update)</button>
                 <button id="runBtn" disabled>Run to Convergence</button>
-                <span id="status" style="margin-left: auto; color: #888;">Ready</span>
+                <span id="status">Ready</span>
             </div>
         </div>
     </main>

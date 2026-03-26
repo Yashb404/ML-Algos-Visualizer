@@ -12,8 +12,8 @@
         .controls {
             margin-top: 1rem;
             padding: 1rem;
-            background: var(--secondary-bg);
-            border-radius: 8px;
+            background: #ffffff;
+            border: 2px solid #000000;
             display: flex;
             gap: 1rem;
             align-items: center;
@@ -22,15 +22,43 @@
 
         input {
             padding: 0.5rem;
-            border-radius: 4px;
-            border: none;
+            border: 2px solid #000000;
             width: 60px;
+            background-color: #ffffff;
+            color: #000000;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        input:focus {
+            outline: none;
+            background-color: #000000;
+            color: #ffffff;
+        }
+
+        button {
+            background-color: #ffffff;
+            color: #000000;
+            border: 2px solid #000000;
+            padding: 0.5rem 1rem;
+            cursor: pointer;
+            font-weight: 600;
+            font-family: 'Courier New', Courier, monospace;
+        }
+
+        button:hover {
+            background-color: #000000;
+            color: #ffffff;
         }
 
         #plot {
             width: 100%;
             height: 500px;
-            background-color: #1e1e1e;
+            background-color: #ffffff;
+            border: 2px solid #000000;
+        }
+
+        label {
+            font-family: 'Courier New', Courier, monospace;
         }
     </style>
 </head>
@@ -43,7 +71,7 @@
             <li><a href="linear-regression.html">Linear Regression</a></li>
             <li><a href="multiple-linear-regression.html">Multiple Linear Regression</a></li>
             <li><a href="logistic-regression.html">Logistic Regression</a></li>
-            <li><a href="knn.html" style="background-color: #3d3d3d;">K-Nearest Neighbors</a></li>
+            <li><a href="knn.html" class="active">K-Nearest Neighbors</a></li>
             <li><a href="naive-bayes.html">Naive Bayes</a></li>
             <li><a href="decision-tree.html">Decision Tree</a></li>
             <li><a href="svm.html">Support Vector Machine</a></li>
@@ -60,12 +88,12 @@
                 <h3>What is happening here?</h3>
                 <p>KNN classifies a new sample by computing distances to all labeled points, selecting the K closest neighbors, and taking a majority vote. Smaller K values can capture local details but be noisy, while larger K values create smoother, more stable decision behavior.</p>
             </div>
-            <p style="color: #aaa;">The central star is a new point. Click classify to connect it to its nearest neighbors.</p>
+            <p>The central star is a new point. Click classify to connect it to its nearest neighbors.</p>
             <div id="plot"></div>
             <div class="controls">
                 <label for="kInput">Set K Value:</label>
                 <input type="number" id="kInput" value="3" min="1" max="15">
-                <button id="classifyBtn" style="background-color: var(--accent-color); padding: 0.5rem; border-radius: 4px; border: none; font-weight: bold; cursor: pointer;">Classify Center Point</button>
+                <button id="classifyBtn">Classify Center Point</button>
             </div>
         </div>
     </main>

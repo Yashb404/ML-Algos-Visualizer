@@ -65,10 +65,14 @@ body {
 }
 
 /* Matched monochrome scrollbars for sidebar and homepage scrollers */
-.nav-links,
 .main-content {
   scrollbar-width: thin;
   scrollbar-color: var(--scroll-thumb) var(--scroll-track);
+}
+
+.nav-links {
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
 }
 
 .nav-links::-webkit-scrollbar,
@@ -87,6 +91,29 @@ body {
   background: var(--scroll-thumb);
   border: 2px solid var(--scroll-track);
   border-radius: 999px;
+}
+
+.nav-links::-webkit-scrollbar-track,
+.nav-links::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-color: transparent;
+}
+
+.sidebar:hover .nav-links {
+  scrollbar-color: var(--scroll-thumb) var(--scroll-track);
+}
+
+.sidebar:hover .nav-links::-webkit-scrollbar-track {
+  background: var(--scroll-track);
+}
+
+.sidebar:hover .nav-links::-webkit-scrollbar-thumb {
+  background: var(--scroll-thumb);
+  border-color: var(--scroll-track);
+}
+
+.sidebar:hover .nav-links::-webkit-scrollbar-thumb:hover {
+  background: var(--scroll-thumb-hover);
 }
 
 .nav-links::-webkit-scrollbar-thumb:hover,
@@ -176,6 +203,24 @@ button:disabled {
   line-height: 1.6;
   color: var(--dim-paper);
   margin-bottom: 0;
+}
+
+.learn-more-link {
+  display: inline-block;
+  margin-top: 0.9rem;
+  color: var(--paper);
+  text-decoration: none;
+  border: 1px solid var(--paper);
+  padding: 0.35rem 0.65rem;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  transition: all 0.2s ease;
+}
+
+.learn-more-link:hover {
+  background: var(--paper);
+  color: var(--void);
 }
 
 .hero-section {

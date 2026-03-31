@@ -20,11 +20,10 @@
             flex-wrap: wrap;
         }
 
-        button,
         select {
-            background-color: var(--accent-color);
-            color: #000;
-            border: none;
+            background-color: var(--secondary-bg);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
             padding: 0.5rem 1rem;
             border-radius: 4px;
             cursor: pointer;
@@ -32,18 +31,8 @@
             font-family: 'Inter', sans-serif;
         }
 
-        button:hover,
         select:hover {
-            opacity: 0.9;
-        }
-
-        button:disabled {
-            background-color: #555;
-            cursor: not-allowed;
-        }
-
-        select {
-            background-color: #fff;
+            border-color: #666;
         }
 
         #plot {
@@ -56,20 +45,27 @@
 
 <body>
     <aside class="sidebar">
-        <h1>ML Viz</h1>
+        <div class="brand">
+            <h1>ML_VIZ</h1>
+            <span class="version">v1.0</span>
+        </div>
         <ul class="nav-links">
-            <li><a href="/">Home</a></li>
+            <li><a href="/">Dashboard</a></li>
+            <li class="nav-header">Regression</li>
             <li><a href="linear-regression.html">Linear Regression</a></li>
-            <li><a href="multiple-linear-regression.html">Multiple Linear Regression</a></li>
+            <li><a href="multiple-linear-regression.html">Multiple Regression</a></li>
+            <li class="nav-header">Classification</li>
             <li><a href="logistic-regression.html">Logistic Regression</a></li>
             <li><a href="knn.html">K-Nearest Neighbors</a></li>
             <li><a href="naive-bayes.html">Naive Bayes</a></li>
-            <li><a href="decision-tree.html">Decision Tree</a></li>
             <li><a href="svm.html">Support Vector Machine</a></li>
+            <li class="nav-header">Ensemble & Trees</li>
+            <li><a href="decision-tree.html">Decision Tree</a></li>
             <li><a href="random-forest.html">Random Forest</a></li>
             <li><a href="adaboost.html">AdaBoost</a></li>
-            <li><a href="k-means.html" style="background-color: #3d3d3d;">K-Means Clustering</a></li>
-            <li><a href="hierarchical-clustering.html">Hierarchical Clustering</a></li>
+            <li class="nav-header">Clustering</li>
+            <li><a href="k-means.html" class="active">K-Means Clustering</a></li>
+            <li><a href="hierarchical-clustering.html">Hierarchical</a></li>
         </ul>
     </aside>
     <main class="main-content">
@@ -78,6 +74,7 @@
             <div class="info-panel">
                 <h3>What is happening here?</h3>
                 <p>K-Means alternates between assigning each point to its nearest centroid and updating centroids to the mean of assigned points. Repeat this for k = 2, 3, and 4 to compare how cluster compactness and separation change with the number of groups.</p>
+                <a class="learn-more-link" href="https://scikit-learn.org/stable/modules/clustering.html#k-means" target="_blank" rel="noopener noreferrer">Learn more</a>
             </div>
             <p style="color: #aaa; margin-bottom: 1rem;">Visualizing Petal Length vs Petal Width. Notice how the clusters form based on the selected K value.</p>
             <div id="plot"></div>

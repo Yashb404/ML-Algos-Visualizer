@@ -61,7 +61,7 @@ function render() {
             y: basePoints.map((p) => p.y),
             mode: "markers",
             type: "scatter",
-            marker: { color: "#58a6ff", size: 10 },
+            marker: { color: "#00bcd4", size: 10 },
             name: "Points"
         },
         ...mergeLines.map((line, idx) => ({
@@ -70,17 +70,17 @@ function render() {
             mode: "lines",
             showlegend: idx === 0,
             name: "Merge",
-            line: { color: "#ffa657", width: 2 }
+            line: { color: "#888888", width: 2 }
         }))
     ];
 
     Plotly.react("plot", traces, {
         title: "Bottom-Up Merge Process",
-        paper_bgcolor: "#1e1e1e",
-        plot_bgcolor: "#1e1e1e",
-        font: { color: "#e0e0e0" },
-        xaxis: { range: [0, 10], gridcolor: "#444" },
-        yaxis: { range: [0, 10], gridcolor: "#444" }
+        paper_bgcolor: "#000000",
+        plot_bgcolor: "#000000",
+        font: { color: "#ffffff" },
+        xaxis: { range: [0, 10], gridcolor: "#333333" },
+        yaxis: { range: [0, 10], gridcolor: "#333333" }
     });
 
     document.getElementById("status").innerText = `Clusters: ${clusters.length}`;

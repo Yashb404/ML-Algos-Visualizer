@@ -28,11 +28,11 @@ const trace1 = {
 
 const layout = {
     title: 'Linear Regression Data',
-    paper_bgcolor: '#1e1e1e',
-    plot_bgcolor: '#1e1e1e',
-    font: { color: '#e0e0e0' },
-    xaxis: { title: 'X', showgrid: true, gridcolor: '#444' },
-    yaxis: { title: 'Y', showgrid: true, gridcolor: '#444' },
+    paper_bgcolor: '#000000',
+    plot_bgcolor: '#000000',
+    font: { color: '#ffffff' },
+    xaxis: { title: 'X', showgrid: true, gridcolor: '#333333' },
+    yaxis: { title: 'Y', showgrid: true, gridcolor: '#333333' },
     showlegend: true
 };
 
@@ -92,7 +92,7 @@ async function trainModel() {
                     mode: 'lines',
                     type: 'scatter',
                     name: 'Regression Line',
-                    line: { color: '#ff4081', width: 2 }
+                    line: { color: '#888888', width: 2 }
                 };
 
                 // Use Plotly.animate or react for smoother updates, but react is simpler here

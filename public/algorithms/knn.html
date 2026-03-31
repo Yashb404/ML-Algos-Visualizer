@@ -30,27 +30,34 @@
         #plot {
             width: 100%;
             height: 500px;
-            background-color: #1e1e1e;
+            background-color: var(--bg-color);
         }
     </style>
 </head>
 
 <body>
     <aside class="sidebar">
-        <h1>ML Viz</h1>
+        <div class="brand">
+            <h1>ML_VIZ</h1>
+            <span class="version">v1.0</span>
+        </div>
         <ul class="nav-links">
-            <li><a href="/">Home</a></li>
+            <li><a href="/">Dashboard</a></li>
+            <li class="nav-header">Regression</li>
             <li><a href="linear-regression.html">Linear Regression</a></li>
-            <li><a href="multiple-linear-regression.html">Multiple Linear Regression</a></li>
+            <li><a href="multiple-linear-regression.html">Multiple Regression</a></li>
+            <li class="nav-header">Classification</li>
             <li><a href="logistic-regression.html">Logistic Regression</a></li>
-            <li><a href="knn.html" style="background-color: #3d3d3d;">K-Nearest Neighbors</a></li>
+            <li><a href="knn.html" class="active">K-Nearest Neighbors</a></li>
             <li><a href="naive-bayes.html">Naive Bayes</a></li>
-            <li><a href="decision-tree.html">Decision Tree</a></li>
             <li><a href="svm.html">Support Vector Machine</a></li>
+            <li class="nav-header">Ensemble & Trees</li>
+            <li><a href="decision-tree.html">Decision Tree</a></li>
             <li><a href="random-forest.html">Random Forest</a></li>
             <li><a href="adaboost.html">AdaBoost</a></li>
+            <li class="nav-header">Clustering</li>
             <li><a href="k-means.html">K-Means Clustering</a></li>
-            <li><a href="hierarchical-clustering.html">Hierarchical Clustering</a></li>
+            <li><a href="hierarchical-clustering.html">Hierarchical</a></li>
         </ul>
     </aside>
     <main class="main-content">
@@ -59,13 +66,14 @@
             <div class="info-panel">
                 <h3>What is happening here?</h3>
                 <p>KNN classifies a new sample by computing distances to all labeled points, selecting the K closest neighbors, and taking a majority vote. Smaller K values can capture local details but be noisy, while larger K values create smoother, more stable decision behavior.</p>
+                <a class="learn-more-link" href="https://scikit-learn.org/stable/modules/neighbors.html#classification" target="_blank" rel="noopener noreferrer">Learn more</a>
             </div>
             <p style="color: #aaa;">The central star is a new point. Click classify to connect it to its nearest neighbors.</p>
             <div id="plot"></div>
             <div class="controls">
                 <label for="kInput">Set K Value:</label>
                 <input type="number" id="kInput" value="3" min="1" max="15">
-                <button id="classifyBtn" style="background-color: var(--accent-color); padding: 0.5rem; border-radius: 4px; border: none; font-weight: bold; cursor: pointer;">Classify Center Point</button>
+                <button id="classifyBtn">Classify Center Point</button>
             </div>
         </div>
     </main>

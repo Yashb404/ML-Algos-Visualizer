@@ -10,11 +10,11 @@ const targetPoint = { x: 5, y: 5 };
 
 const layout = {
     title: "KNN Classification",
-    paper_bgcolor: "#1e1e1e",
-    plot_bgcolor: "#1e1e1e",
-    font: { color: "#e0e0e0" },
-    xaxis: { range: [0, 10], showgrid: true, gridcolor: "#444" },
-    yaxis: { range: [0, 10], showgrid: true, gridcolor: "#444" }
+    paper_bgcolor: "#000000",
+    plot_bgcolor: "#000000",
+    font: { color: "#ffffff" },
+    xaxis: { range: [0, 10], showgrid: true, gridcolor: "#333333" },
+    yaxis: { range: [0, 10], showgrid: true, gridcolor: "#333333" }
 };
 
 function buildBaseTraces() {
@@ -24,21 +24,21 @@ function buildBaseTraces() {
             y: points.filter((p) => p.class === 0).map((p) => p.y),
             mode: "markers",
             name: "Class 0",
-            marker: { color: "#ff4081", size: 10 }
+            marker: { color: "#00bcd4", size: 10 }
         },
         {
             x: points.filter((p) => p.class === 1).map((p) => p.x),
             y: points.filter((p) => p.class === 1).map((p) => p.y),
             mode: "markers",
             name: "Class 1",
-            marker: { color: "#00bcd4", size: 10 }
+            marker: { color: "#ff4081", size: 10, symbol: "cross" }
         },
         {
             x: [targetPoint.x],
             y: [targetPoint.y],
             mode: "markers",
             name: "Target",
-            marker: { color: "#fff", size: 15, symbol: "star" }
+            marker: { color: "#ffeb3b", size: 15, symbol: "star" }
         }
     ];
 }
@@ -64,14 +64,14 @@ document.getElementById("classifyBtn").addEventListener("click", () => {
     }, {});
 
     const predictedClass = (classVotes[1] || 0) > (classVotes[0] || 0) ? 1 : 0;
-    const lineColor = predictedClass === 1 ? "#00bcd4" : "#ff4081";
+    const lineColor = predictedClass === 1 ? "#ff4081" : "#00bcd4";
 
     const neighborLines = neighbors.map((neighbor) => ({
         x: [targetPoint.x, neighbor.x],
         y: [targetPoint.y, neighbor.y],
         mode: "lines",
         showlegend: false,
-        line: { color: "#e0e0e0", dash: "dot", width: 2 }
+        line: { color: "#aaaaaa", dash: "dot", width: 2 }
     }));
 
     const traces = [

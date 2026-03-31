@@ -3,11 +3,11 @@ const svmB = Array.from({ length: 35 }, () => ({ x: 6 + Math.random() * 3, y: 1 
 
 const layout = {
     title: "Linear Separation with Margin",
-    paper_bgcolor: "#1e1e1e",
-    plot_bgcolor: "#1e1e1e",
-    font: { color: "#e0e0e0" },
-    xaxis: { range: [0, 10], gridcolor: "#444" },
-    yaxis: { range: [0, 10], gridcolor: "#444" }
+    paper_bgcolor: "#000000",
+    plot_bgcolor: "#000000",
+    font: { color: "#ffffff" },
+    xaxis: { range: [0, 10], gridcolor: "#333333" },
+    yaxis: { range: [0, 10], gridcolor: "#333333" }
 };
 
 function meanPoint(points) {
@@ -24,14 +24,14 @@ function render(withBoundary) {
             y: svmA.map((p) => p.y),
             mode: "markers",
             name: "Class -1",
-            marker: { color: "#58a6ff", size: 9 }
+            marker: { color: "#2563eb", size: 9 }
         },
         {
             x: svmB.map((p) => p.x),
             y: svmB.map((p) => p.y),
             mode: "markers",
             name: "Class +1",
-            marker: { color: "#ffa657", size: 9 }
+            marker: { color: "#dc2626", size: 9, symbol: "cross" }
         }
     ];
 
@@ -73,7 +73,7 @@ function render(withBoundary) {
             y: margin1.map((p) => p.y),
             mode: "lines",
             name: "Margin",
-            line: { color: "#c9d1d9", width: 2, dash: "dot" }
+            line: { color: "#aaaaaa", width: 2, dash: "dot" }
         });
 
         traces.push({
@@ -81,7 +81,7 @@ function render(withBoundary) {
             y: margin2.map((p) => p.y),
             mode: "lines",
             showlegend: false,
-            line: { color: "#c9d1d9", width: 2, dash: "dot" }
+            line: { color: "#aaaaaa", width: 2, dash: "dot" }
         });
     }
 

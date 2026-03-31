@@ -4,11 +4,11 @@ const target = { x: 5, y: 4.8 };
 
 const layout = {
     title: "Feature Space",
-    paper_bgcolor: "#1e1e1e",
-    plot_bgcolor: "#1e1e1e",
-    font: { color: "#e0e0e0" },
-    xaxis: { range: [0, 10], gridcolor: "#444" },
-    yaxis: { range: [0, 10], gridcolor: "#444" }
+    paper_bgcolor: "#000000",
+    plot_bgcolor: "#000000",
+    font: { color: "#ffffff" },
+    xaxis: { range: [0, 10], gridcolor: "#333333" },
+    yaxis: { range: [0, 10], gridcolor: "#333333" }
 };
 
 function mean(values) {
@@ -45,21 +45,21 @@ function renderScatter() {
             y: classA.map((p) => p.y),
             mode: "markers",
             name: "Class 0",
-            marker: { color: "#58a6ff", size: 9 }
+            marker: { color: "#00bcd4", size: 9 }
         },
         {
             x: classB.map((p) => p.x),
             y: classB.map((p) => p.y),
             mode: "markers",
             name: "Class 1",
-            marker: { color: "#ffa657", size: 9 }
+            marker: { color: "#ff4081", size: 9, symbol: "cross" }
         },
         {
             x: [target.x],
             y: [target.y],
             mode: "markers",
             name: "Target",
-            marker: { color: "#ffffff", size: 16, symbol: "star" }
+            marker: { color: "#ffeb3b", size: 16, symbol: "star" }
         }
     ], layout);
 }
@@ -70,14 +70,14 @@ function renderPosterior(p0, p1) {
             x: ["Class 0", "Class 1"],
             y: [p0, p1],
             type: "bar",
-            marker: { color: ["#58a6ff", "#ffa657"] }
+            marker: { color: ["#ffffff", "#888888"] }
         }
     ], {
         title: "Posterior Probabilities",
-        paper_bgcolor: "#1e1e1e",
-        plot_bgcolor: "#1e1e1e",
-        font: { color: "#e0e0e0" },
-        yaxis: { range: [0, 1], gridcolor: "#444" }
+        paper_bgcolor: "#000000",
+        plot_bgcolor: "#000000",
+        font: { color: "#ffffff" },
+        yaxis: { range: [0, 1], gridcolor: "#333333" }
     });
 }
 

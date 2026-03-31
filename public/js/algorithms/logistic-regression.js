@@ -8,11 +8,11 @@ const yValues = data.map((point) => point.y);
 
 const layout = {
     title: "Logistic Regression (Sigmoid Curve)",
-    paper_bgcolor: "#1e1e1e",
-    plot_bgcolor: "#1e1e1e",
-    font: { color: "#e0e0e0" },
-    xaxis: { title: "Feature (X)", showgrid: true, gridcolor: "#444" },
-    yaxis: { title: "Probability (Class 1)", showgrid: true, gridcolor: "#444", range: [-0.1, 1.1] }
+    paper_bgcolor: "#000000",
+    plot_bgcolor: "#000000",
+    font: { color: "#ffffff" },
+    xaxis: { title: "Feature (X)", showgrid: true, gridcolor: "#333333" },
+    yaxis: { title: "Probability (Class 1)", showgrid: true, gridcolor: "#333333", range: [-0.1, 1.1] }
 };
 
 const traceData = {
@@ -21,7 +21,7 @@ const traceData = {
     mode: "markers",
     type: "scatter",
     name: "Data",
-    marker: { size: 10, color: "#00e676" }
+    marker: { size: 10, color: "#00bcd4" }
 };
 
 Plotly.newPlot("plot", [traceData], layout);
@@ -55,7 +55,7 @@ async function trainModel() {
                     y: yLine,
                     mode: "lines",
                     name: "Sigmoid Probability",
-                    line: { color: "#ff4081", width: 3 }
+                    line: { color: "#888888", width: 3 }
                 };
 
                 Plotly.react("plot", [traceData, traceCurve], layout);

@@ -8,9 +8,9 @@ for (let i = 0; i < 100; i++) {
 
 const layout = {
     title: "Ensemble Decision Boundary",
-    paper_bgcolor: "#1e1e1e",
-    plot_bgcolor: "#1e1e1e",
-    font: { color: "#e0e0e0" },
+    paper_bgcolor: "#000000",
+    plot_bgcolor: "#000000",
+    font: { color: "#ffffff" },
     xaxis: { range: [0, 10], showgrid: false },
     yaxis: { range: [0, 10], showgrid: false }
 };
@@ -22,14 +22,14 @@ function pointTraces() {
             y: pts.filter((p) => p.class === 0).map((p) => p.y),
             mode: "markers",
             name: "Class 0",
-            marker: { color: "#ff4081", line: { color: "white", width: 1 } }
+            marker: { color: "#2563eb", line: { color: "#222222", width: 1 } }
         },
         {
             x: pts.filter((p) => p.class === 1).map((p) => p.x),
             y: pts.filter((p) => p.class === 1).map((p) => p.y),
             mode: "markers",
             name: "Class 1",
-            marker: { color: "#00bcd4", line: { color: "white", width: 1 } }
+            marker: { color: "#dc2626", symbol: "cross", line: { color: "#222222", width: 1 } }
         }
     ];
 }
@@ -56,8 +56,8 @@ document.getElementById("renderBtn").addEventListener("click", () => {
         y: axisValues,
         type: "contour",
         colorscale: [
-            [0, "rgba(255, 64, 129, 0.2)"],
-            [1, "rgba(0, 188, 212, 0.2)"]
+            [0, "rgba(255, 255, 255, 0.12)"],
+            [1, "rgba(136, 136, 136, 0.18)"]
         ],
         showscale: false,
         line: { width: 0 }

@@ -1,10 +1,10 @@
 :root {
-  --bg-color: #0d1117;
-  --text-color: #c9d1d9;
-  --accent-color: #58a6ff;
-  --secondary-bg: #161b22;
-  --border-color: #30363d;
-  --card-bg: #1c2128;
+  --bg-color: #000000;
+  --text-color: #ffffff;
+  --accent-color: #ffffff;
+  --secondary-bg: #0a0a0a;
+  --border-color: #333333;
+  --card-bg: #000000;
 }
 
 body {
@@ -18,12 +18,11 @@ body {
 
 .sidebar {
   width: 260px;
-  background: linear-gradient(180deg, #161b22 0%, #0d1117 100%);
+  background: var(--bg-color);
   border-right: 1px solid var(--border-color);
   display: flex;
   flex-direction: column;
   padding: 1.5rem 1rem;
-  box-shadow: 2px 0 10px rgba(0, 0, 0, 0.5);
   z-index: 10;
 }
 
@@ -49,55 +48,75 @@ body {
 
 .nav-links a {
   text-decoration: none;
-  color: #8b949e;
+  color: #888888;
   display: flex;
   align-items: center;
   padding: 0.75rem 1rem;
-  border-radius: 6px;
-  transition: all 0.3s ease;
+  border-radius: 4px;
+  transition: all 0.2s ease;
   font-weight: 500;
 }
 
 .nav-links a:hover,
 .nav-links a.active {
-  background-color: rgba(88, 166, 255, 0.1);
-  color: var(--accent-color);
-  transform: translateX(5px);
+  background-color: var(--text-color);
+  color: var(--bg-color);
+  transform: translateX(4px);
+}
+
+button {
+  background-color: var(--bg-color);
+  color: var(--text-color);
+  border: 1px solid var(--text-color);
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+button:hover:not(:disabled) {
+  background-color: var(--text-color);
+  color: var(--bg-color);
+}
+
+button:disabled {
+  border-color: #333;
+  color: #555;
+  cursor: not-allowed;
 }
 
 .main-content {
   flex: 1;
   padding: 2rem;
   overflow-y: auto;
-  background: radial-gradient(circle at top left, #161b22, var(--bg-color));
+  background: var(--bg-color);
 }
 
 .card {
   background-color: var(--card-bg);
   padding: 2rem;
-  border-radius: 12px;
+  border-radius: 4px;
   border: 1px solid var(--border-color);
   margin-bottom: 1.5rem;
-  box-shadow: 0 4px 15px rgba(0, 0, 0, 0.2);
 }
 
 .info-panel {
-  background: rgba(88, 166, 255, 0.05);
-  border-left: 4px solid var(--accent-color);
+  background: var(--secondary-bg);
+  border-left: 4px solid var(--text-color);
   padding: 1.5rem;
   margin-bottom: 1.5rem;
-  border-radius: 0 8px 8px 0;
 }
 
 .info-panel h3 {
   margin-top: 0;
-  color: var(--accent-color);
+  color: var(--text-color);
   font-size: 1.1rem;
 }
 
 .info-panel p {
   line-height: 1.6;
-  color: #c9d1d9;
+  color: #d0d0d0;
   margin-bottom: 0;
 }
 
@@ -111,7 +130,7 @@ body {
 .algo-card {
   background-color: var(--secondary-bg);
   border: 1px solid var(--border-color);
-  border-radius: 10px;
+  border-radius: 4px;
   padding: 1.5rem;
   transition: transform 0.3s ease, box-shadow 0.3s ease;
   text-decoration: none;
@@ -122,8 +141,8 @@ body {
 
 .algo-card:hover {
   transform: translateY(-5px);
-  box-shadow: 0 8px 20px rgba(88, 166, 255, 0.15);
-  border-color: var(--accent-color);
+  box-shadow: 0 8px 20px rgba(255, 255, 255, 0.08);
+  border-color: #666666;
 }
 
 .algo-card h3 {
@@ -132,7 +151,7 @@ body {
 }
 
 .algo-card p {
-  color: #8b949e;
+  color: #9a9a9a;
   font-size: 0.9rem;
   line-height: 1.5;
 }

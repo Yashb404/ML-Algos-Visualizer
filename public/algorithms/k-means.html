@@ -20,11 +20,10 @@
             flex-wrap: wrap;
         }
 
-        button,
         select {
-            background-color: var(--accent-color);
-            color: #000;
-            border: none;
+            background-color: var(--secondary-bg);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
             padding: 0.5rem 1rem;
             border-radius: 4px;
             cursor: pointer;
@@ -32,18 +31,8 @@
             font-family: 'Inter', sans-serif;
         }
 
-        button:hover,
         select:hover {
-            opacity: 0.9;
-        }
-
-        button:disabled {
-            background-color: #555;
-            cursor: not-allowed;
-        }
-
-        select {
-            background-color: #fff;
+            border-color: #666;
         }
 
         #plot {
@@ -68,7 +57,7 @@
             <li><a href="svm.html">Support Vector Machine</a></li>
             <li><a href="random-forest.html">Random Forest</a></li>
             <li><a href="adaboost.html">AdaBoost</a></li>
-            <li><a href="k-means.html" style="background-color: #3d3d3d;">K-Means Clustering</a></li>
+            <li><a href="k-means.html" class="active">K-Means Clustering</a></li>
             <li><a href="hierarchical-clustering.html">Hierarchical Clustering</a></li>
         </ul>
     </aside>

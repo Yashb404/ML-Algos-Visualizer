@@ -10,11 +10,11 @@ let weights = Array(boostPoints.length).fill(1 / boostPoints.length);
 
 const layout = {
     title: "Weighted Samples and Weak Learners",
-    paper_bgcolor: "#1e1e1e",
-    plot_bgcolor: "#1e1e1e",
-    font: { color: "#e0e0e0" },
-    xaxis: { range: [0, 8], title: "Feature", gridcolor: "#444" },
-    yaxis: { range: [-1.6, 1.6], tickvals: [-1, 1], ticktext: ["Class -1", "Class +1"], gridcolor: "#444" }
+    paper_bgcolor: "#000000",
+    plot_bgcolor: "#000000",
+    font: { color: "#ffffff" },
+    xaxis: { range: [0, 8], title: "Feature", gridcolor: "#333333" },
+    yaxis: { range: [-1.6, 1.6], tickvals: [-1, 1], ticktext: ["Class -1", "Class +1"], gridcolor: "#333333" }
 };
 
 function stumpPredict(x, threshold) {
@@ -48,7 +48,7 @@ function render() {
         y0: -1.6,
         x1: t,
         y1: 1.6,
-        line: { color: ["#58a6ff", "#ffa657", "#3fb950"][idx], width: 2, dash: "dot" }
+        line: { color: ["#ffffff", "#aaaaaa", "#666666"][idx], width: 2, dash: "dot" }
     }));
 
     const classMinus = boostPoints
@@ -65,7 +65,7 @@ function render() {
             mode: "markers",
             name: "Class -1",
             marker: {
-                color: "#58a6ff",
+                color: "#2563eb",
                 size: classMinus.map((p) => 10 + p.w * 90)
             }
         },
@@ -75,7 +75,7 @@ function render() {
             mode: "markers",
             name: "Class +1",
             marker: {
-                color: "#ffa657",
+                color: "#dc2626",
                 size: classPlus.map((p) => 10 + p.w * 90)
             }
         }

@@ -11,11 +11,11 @@ const yData = samples.map((sample) => sample.y);
 
 const layout = {
     title: "Actual vs Predicted (Multiple Regression)",
-    paper_bgcolor: "#1e1e1e",
-    plot_bgcolor: "#1e1e1e",
-    font: { color: "#e0e0e0" },
-    xaxis: { title: "Sample Index", gridcolor: "#444" },
-    yaxis: { title: "Target Value", gridcolor: "#444" }
+    paper_bgcolor: "#000000",
+    plot_bgcolor: "#000000",
+    font: { color: "#ffffff" },
+    xaxis: { title: "Sample Index", gridcolor: "#333333" },
+    yaxis: { title: "Target Value", gridcolor: "#333333" }
 };
 
 const actualTrace = {
@@ -24,7 +24,7 @@ const actualTrace = {
     mode: "markers",
     type: "scatter",
     name: "Actual",
-    marker: { color: "#58a6ff", size: 8 }
+    marker: { color: "#00bcd4", size: 8 }
 };
 
 Plotly.newPlot("plot", [actualTrace], layout);
@@ -65,7 +65,7 @@ async function trainModel() {
                     mode: "lines",
                     type: "scatter",
                     name: "Predicted",
-                    line: { color: "#ffa657", width: 2 }
+                    line: { color: "#888888", width: 2 }
                 };
 
                 Plotly.react("plot", [actualTrace, predTrace], layout);

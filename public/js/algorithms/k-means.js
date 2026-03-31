@@ -27,11 +27,11 @@ const colors = ["#00bcd4", "#ff4081", "#00e676", "#ffeb3b"];
 
 const layout = {
     title: "K-Means Iteration",
-    paper_bgcolor: "#1e1e1e",
-    plot_bgcolor: "#1e1e1e",
-    font: { color: "#e0e0e0" },
-    xaxis: { title: "Petal Length (Scaled)", showgrid: true, gridcolor: "#444" },
-    yaxis: { title: "Petal Width (Scaled)", showgrid: true, gridcolor: "#444" },
+    paper_bgcolor: "#000000",
+    plot_bgcolor: "#000000",
+    font: { color: "#ffffff" },
+    xaxis: { title: "Petal Length (Scaled)", showgrid: true, gridcolor: "#333333" },
+    yaxis: { title: "Petal Width (Scaled)", showgrid: true, gridcolor: "#333333" },
     showlegend: false,
     hovermode: false
 };
@@ -48,7 +48,7 @@ function renderPlot() {
             type: "scatter",
             marker: {
                 size: 8,
-                color: assignments.includes(-1) ? "#888" : colors[c],
+                color: assignments.includes(-1) ? "#9e9e9e" : colors[c],
                 opacity: 0.75
             }
         });
@@ -64,7 +64,7 @@ function renderPlot() {
                 size: 18,
                 color: colors.slice(0, k),
                 symbol: "x",
-                line: { color: "white", width: 2 }
+                line: { color: "#ffffff", width: 2 }
             }
         });
     }

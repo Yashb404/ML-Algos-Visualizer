@@ -1,4 +1,4 @@
-# ML Algos Visualizer
+# ML_VIZ : Machine Learning Algorithm Visualizer
 
 An interactive, browser-first machine learning playground that demonstrates how core algorithms behave step-by-step.
 
@@ -8,6 +8,8 @@ The project focuses on clarity and explainability: each module is isolated, visu
 
 - Interactive algorithm pages with real-time plotting.
 - In-browser model training (TensorFlow.js) where applicable.
+- Custom input controls where supported (for example, prediction inputs, target coordinates, and model hyperparameters).
+- Reset actions across all algorithm pages to restore a clean initial state.
 - Step-wise simulation flows for algorithm internals (for example, assignment/update loops in K-Means).
 - Simple Express static server for fast local development.
 - Modular file structure designed for adding new visualizers quickly.
@@ -17,14 +19,26 @@ The project focuses on clarity and explainability: each module is isolated, visu
 - Linear Regression
 - Multiple Linear Regression
 - Logistic Regression (binary classification sigmoid training)
-- K-Nearest Neighbors (distance-based classification)
-- Naive Bayes (probabilistic classification)
+- K-Nearest Neighbors (distance-based classification with custom target point)
+- Naive Bayes (probabilistic classification with custom target point)
 - Decision Tree (step-wise feature splits)
-- Support Vector Machine (max-margin separator)
-- Random Forest (ensemble-style boundary simulation)
+- Support Vector Machine (linear max-margin boundary from hinge-loss optimization)
+- Random Forest (bootstrapped decision trees with majority-vote boundary)
 - AdaBoost (iterative weak learner weighting)
 - K-Means Clustering (iterative centroid updates with selectable $k$)
 - Hierarchical Clustering (agglomerative merge process)
+
+## Interaction Features
+
+- `Reset` is available on every algorithm page.
+- Supported modules include additional user inputs:
+    - Linear Regression: custom `X` prediction input.
+    - Logistic Regression: custom `X` class/probability prediction input.
+    - Multiple Linear Regression: custom `X1`, `X2` prediction input.
+    - KNN: custom target point (`X`, `Y`) for classification.
+    - Naive Bayes: custom target point (`X`, `Y`) for posterior classification.
+    - SVM: custom training hyperparameters (`epochs`, learning rate).
+    - Random Forest: custom ensemble settings (number of trees, max depth).
 
 ## Project Structure
 

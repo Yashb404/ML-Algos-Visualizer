@@ -91,6 +91,20 @@ function initializeCentroids() {
     renderPlot();
 }
 
+function resetVisualization() {
+    data = generateIrisData();
+    k = parseInt(document.getElementById("kValue").value, 10);
+    centroids = [];
+    assignments = new Array(data.length).fill(-1);
+    isConverged = false;
+    stepState = "assign";
+
+    document.getElementById("status").innerText = "Ready";
+    document.getElementById("stepBtn").disabled = true;
+    document.getElementById("runBtn").disabled = true;
+    renderPlot();
+}
+
 function stepKMeans() {
     if (isConverged) {
         return;
@@ -163,5 +177,6 @@ async function runToConvergence() {
 document.getElementById("initBtn").addEventListener("click", initializeCentroids);
 document.getElementById("stepBtn").addEventListener("click", stepKMeans);
 document.getElementById("runBtn").addEventListener("click", runToConvergence);
+document.getElementById("resetBtn").addEventListener("click", resetVisualization);
 
 renderPlot();

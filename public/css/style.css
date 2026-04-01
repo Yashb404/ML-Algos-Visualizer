@@ -169,6 +169,26 @@ button:disabled {
   cursor: not-allowed;
 }
 
+.controls label {
+  font-size: 0.85rem;
+  color: var(--dim-paper);
+}
+
+.controls input,
+.controls select {
+  background: var(--void);
+  color: var(--paper);
+  border: 1px solid var(--border);
+  padding: 0.45rem 0.55rem;
+  border-radius: 4px;
+}
+
+.controls input:focus,
+.controls select:focus {
+  outline: 1px solid var(--paper);
+  border-color: var(--paper);
+}
+
 /* --- Main Layout --- */
 .main-content {
   flex: 1;

@@ -60,7 +60,13 @@
             <p style="color: #aaa;">Generate a heatmap-like boundary to mimic ensemble voting behavior from multiple trees.</p>
             <div id="plot"></div>
             <div class="controls">
+                <label for="treesInput">Trees:</label>
+                <input type="number" id="treesInput" value="25" min="5" max="101" step="2" style="width: 90px;">
+                <label for="depthInput">Depth:</label>
+                <input type="number" id="depthInput" value="4" min="1" max="8" step="1" style="width: 90px;">
                 <button id="renderBtn">Generate Ensemble Boundary</button>
+                <button id="resetBtn">Reset</button>
+                <span id="status" style="margin-left: 1rem; color: #888;">Ready</span>
             </div>
         </div>
     </main>

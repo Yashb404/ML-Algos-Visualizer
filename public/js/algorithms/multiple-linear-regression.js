@@ -30,13 +30,41 @@ const actualTrace = {
 Plotly.newPlot("plot", [actualTrace], layout);
 
 let isTraining = false;
+let trainedModel = null;
 
 function resetVisualization() {
+    if (trainedModel) {
+        trainedModel.dispose();
+        trainedModel = null;
+    }
+
     isTraining = false;
     document.getElementById("trainBtn").disabled = false;
     document.getElementById("status").innerText = "Ready to train";
     document.getElementById("loss").innerText = "Loss: -";
     Plotly.react("plot", [actualTrace], layout);
+}
+
+function predictFromInput() {
+    if (!trainedModel) {
+        document.getElementById("status").innerText = "Train the model first";
+        return;
+    }
+
+    const x1 = parseFloat(document.getElementById("x1Input").value);
+    const x2 = parseFloat(document.getElementById("x2Input").value);
+    if (!Number.isFinite(x1) || !Number.isFinite(x2)) {
+        document.getElementById("status").innerText = "Enter valid X1 and X2 values";
+        return;
+    }
+
+    const xTensor = tf.tensor2d([[x1, x2]], [1, 2]);
+    const yTensor = trainedModel.predict(xTensor);
+    const predictedY = yTensor.dataSync()[0];
+    xTensor.dispose();
+    yTensor.dispose();
+
+    document.getElementById("status").innerText = `Prediction: y=${predictedY.toFixed(3)} for x1=${x1}, x2=${x2}`;
 }
 
 async function trainModel() {
@@ -58,6 +86,11 @@ async function trainModel() {
     const model = tf.sequential();
     model.add(tf.layers.dense({ units: 1, inputShape: [2] }));
     model.compile({ optimizer: tf.train.adam(0.08), loss: "meanSquaredError" });
+
+    if (trainedModel) {
+        trainedModel.dispose();
+    }
+    trainedModel = model;
 
     await model.fit(xs, ys, {
         epochs: 120,
@@ -92,3 +125,4 @@ async function trainModel() {
 
 document.getElementById("trainBtn").addEventListener("click", trainModel);
 document.getElementById("resetBtn").addEventListener("click", resetVisualization);
+document.getElementById("predictBtn").addEventListener("click", predictFromInput);

@@ -56,6 +56,27 @@ function resetVisualization() {
     Plotly.react('plot', [trace1], layout);
 }
 
+function predictFromInput() {
+    if (!model) {
+        document.getElementById('status').innerText = 'Train the model first';
+        return;
+    }
+
+    const inputValue = parseFloat(document.getElementById('xInput').value);
+    if (!Number.isFinite(inputValue)) {
+        document.getElementById('status').innerText = 'Enter a valid X value';
+        return;
+    }
+
+    const xTensor = tf.tensor2d([inputValue], [1, 1]);
+    const yTensor = model.predict(xTensor);
+    const predictedY = yTensor.dataSync()[0];
+    xTensor.dispose();
+    yTensor.dispose();
+
+    document.getElementById('status').innerText = `Prediction: y=${predictedY.toFixed(3)} for x=${inputValue}`;
+}
+
 function createModel() {
     const model = tf.sequential();
     model.add(tf.layers.dense({ units: 1, inputShape: [1] }));
@@ -131,3 +152,4 @@ async function trainModel() {
 
 document.getElementById('trainBtn').addEventListener('click', trainModel);
 document.getElementById('resetBtn').addEventListener('click', resetVisualization);
+document.getElementById('predictBtn').addEventListener('click', predictFromInput);

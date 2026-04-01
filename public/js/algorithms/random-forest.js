@@ -159,6 +159,8 @@ function pointTraces() {
 }
 
 function renderInitial() {
+    document.getElementById("treesInput").value = "25";
+    document.getElementById("depthInput").value = "4";
     Plotly.newPlot("plot", pointTraces(), layout);
     document.getElementById("status").innerText = "Ready";
 }
@@ -166,7 +168,17 @@ function renderInitial() {
 renderInitial();
 
 document.getElementById("renderBtn").addEventListener("click", () => {
-    const forest = trainForest(pts, 25, 4);
+    const treesInput = parseInt(document.getElementById("treesInput").value, 10);
+    const depthInput = parseInt(document.getElementById("depthInput").value, 10);
+
+    if (!Number.isFinite(treesInput) || treesInput < 1 || !Number.isFinite(depthInput) || depthInput < 1) {
+        document.getElementById("status").innerText = "Enter valid tree and depth values";
+        return;
+    }
+
+    const nTrees = Math.max(1, treesInput);
+    const maxDepth = Math.max(1, depthInput);
+    const forest = trainForest(pts, nTrees, maxDepth);
     const axisValues = Array.from({ length: 21 }, (_, idx) => idx * 0.5);
     const gridZ = axisValues.map((y) => axisValues.map((x) => {
         return predictForest(forest, { x, y });
@@ -186,7 +198,7 @@ document.getElementById("renderBtn").addEventListener("click", () => {
     };
 
     Plotly.react("plot", [contour, ...pointTraces()], layout);
-    document.getElementById("status").innerText = "Ensemble boundary generated";
+    document.getElementById("status").innerText = `Boundary generated (trees=${nTrees}, depth=${maxDepth})`;
 });
 
 document.getElementById("resetBtn").addEventListener("click", renderInitial);

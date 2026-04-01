@@ -1,6 +1,6 @@
 const classA = Array.from({ length: 40 }, () => ({ x: 2 + Math.random() * 2, y: 2 + Math.random() * 2 }));
 const classB = Array.from({ length: 40 }, () => ({ x: 6 + Math.random() * 2, y: 6 + Math.random() * 2 }));
-const target = { x: 5, y: 4.8 };
+let target = { x: 5, y: 4.8 };
 
 const layout = {
     title: "Feature Space",
@@ -82,6 +82,20 @@ function renderPosterior(p0, p1) {
 }
 
 function classify() {
+    const tx = parseFloat(document.getElementById("targetXInput").value);
+    const ty = parseFloat(document.getElementById("targetYInput").value);
+
+    if (!Number.isFinite(tx) || !Number.isFinite(ty)) {
+        document.getElementById("status").innerText = "Enter valid target coordinates";
+        return;
+    }
+
+    target = {
+        x: Math.max(0, Math.min(10, tx)),
+        y: Math.max(0, Math.min(10, ty))
+    };
+    renderScatter();
+
     const s0 = getStats(classA);
     const s1 = getStats(classB);
 
@@ -104,6 +118,9 @@ function classify() {
 }
 
 function resetVisualization() {
+    target = { x: 5, y: 4.8 };
+    document.getElementById("targetXInput").value = "5";
+    document.getElementById("targetYInput").value = "4.8";
     renderScatter();
     renderPosterior(0.5, 0.5);
     document.getElementById("status").innerText = "Ready";

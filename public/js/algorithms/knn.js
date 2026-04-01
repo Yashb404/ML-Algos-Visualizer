@@ -47,7 +47,24 @@ function render() {
     Plotly.newPlot("plot", buildBaseTraces(), layout);
 }
 
+function syncTargetFromInputs() {
+    const x = parseFloat(document.getElementById("targetXInput").value);
+    const y = parseFloat(document.getElementById("targetYInput").value);
+
+    if (!Number.isFinite(x) || !Number.isFinite(y)) {
+        return false;
+    }
+
+    targetPoint.x = Math.max(0, Math.min(10, x));
+    targetPoint.y = Math.max(0, Math.min(10, y));
+    return true;
+}
+
 function resetVisualization() {
+    document.getElementById("targetXInput").value = "5";
+    document.getElementById("targetYInput").value = "5";
+    targetPoint.x = 5;
+    targetPoint.y = 5;
     document.getElementById("status").innerText = "Ready";
     render();
 }
@@ -55,6 +72,11 @@ function resetVisualization() {
 render();
 
 document.getElementById("classifyBtn").addEventListener("click", () => {
+    if (!syncTargetFromInputs()) {
+        document.getElementById("status").innerText = "Enter valid target coordinates";
+        return;
+    }
+
     const kInput = parseInt(document.getElementById("kInput").value, 10);
     const k = Math.max(1, Math.min(points.length, kInput || 1));
 
@@ -96,3 +118,13 @@ document.getElementById("classifyBtn").addEventListener("click", () => {
 });
 
 document.getElementById("resetBtn").addEventListener("click", resetVisualization);
+document.getElementById("targetXInput").addEventListener("change", () => {
+    if (syncTargetFromInputs()) {
+        render();
+    }
+});
+document.getElementById("targetYInput").addEventListener("change", () => {
+    if (syncTargetFromInputs()) {
+        render();
+    }
+});

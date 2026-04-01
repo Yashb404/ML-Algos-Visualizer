@@ -40,7 +40,7 @@ function trainLinearSvm(points, labels, options = {}) {
     return { w1, w2, b };
 }
 
-function render(withBoundary) {
+function render(withBoundary, options = {}) {
     const traces = [
         {
             x: svmA.map((p) => p.x),
@@ -61,7 +61,7 @@ function render(withBoundary) {
     if (withBoundary) {
         const trainingPoints = [...svmA, ...svmB];
         const labels = [...Array(svmA.length).fill(-1), ...Array(svmB.length).fill(1)];
-        const model = trainLinearSvm(trainingPoints, labels);
+        const model = trainLinearSvm(trainingPoints, labels, options);
 
         const eps = 1e-8;
         const { w1, w2, b } = model;
@@ -123,13 +123,23 @@ function render(withBoundary) {
 render(false);
 
 function resetVisualization() {
+    document.getElementById("epochsInput").value = "1200";
+    document.getElementById("lrInput").value = "0.01";
     render(false);
     document.getElementById("status").innerText = "Ready";
 }
 
 document.getElementById("fitBtn").addEventListener("click", () => {
-    render(true);
-    document.getElementById("status").innerText = "Boundary and margins rendered";
+    const epochs = parseInt(document.getElementById("epochsInput").value, 10);
+    const learningRate = parseFloat(document.getElementById("lrInput").value);
+
+    if (!Number.isFinite(epochs) || epochs <= 0 || !Number.isFinite(learningRate) || learningRate <= 0) {
+        document.getElementById("status").innerText = "Enter valid epochs and learning rate";
+        return;
+    }
+
+    render(true, { epochs, learningRate });
+    document.getElementById("status").innerText = `Boundary rendered (epochs=${epochs}, lr=${learningRate})`;
 });
 
 document.getElementById("resetBtn").addEventListener("click", resetVisualization);

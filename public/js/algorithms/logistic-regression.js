@@ -28,6 +28,18 @@ Plotly.newPlot("plot", [traceData], layout);
 
 let model;
 
+function resetVisualization() {
+    if (model) {
+        model.dispose();
+        model = null;
+    }
+
+    document.getElementById("trainBtn").disabled = false;
+    document.getElementById("status").innerText = "Ready to train";
+    document.getElementById("loss").innerText = "Loss: -";
+    Plotly.react("plot", [traceData], layout);
+}
+
 async function trainModel() {
     const button = document.getElementById("trainBtn");
     button.disabled = true;
@@ -72,3 +84,4 @@ async function trainModel() {
 }
 
 document.getElementById("trainBtn").addEventListener("click", trainModel);
+document.getElementById("resetBtn").addEventListener("click", resetVisualization);

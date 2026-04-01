@@ -43,6 +43,19 @@ Plotly.newPlot('plot', [trace1], layout);
 let model;
 let isTraining = false;
 
+function resetVisualization() {
+    if (model) {
+        model.dispose();
+        model = null;
+    }
+
+    isTraining = false;
+    document.getElementById('trainBtn').disabled = false;
+    document.getElementById('status').innerText = 'Ready to train';
+    document.getElementById('loss').innerText = 'Loss: -';
+    Plotly.react('plot', [trace1], layout);
+}
+
 function createModel() {
     const model = tf.sequential();
     model.add(tf.layers.dense({ units: 1, inputShape: [1] }));
@@ -117,3 +130,4 @@ async function trainModel() {
 }
 
 document.getElementById('trainBtn').addEventListener('click', trainModel);
+document.getElementById('resetBtn').addEventListener('click', resetVisualization);

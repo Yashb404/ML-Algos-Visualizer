@@ -10,11 +10,34 @@ const layout = {
     yaxis: { range: [0, 10], gridcolor: "#333333" }
 };
 
-function meanPoint(points) {
-    return {
-        x: points.reduce((sum, p) => sum + p.x, 0) / points.length,
-        y: points.reduce((sum, p) => sum + p.y, 0) / points.length
-    };
+function trainLinearSvm(points, labels, options = {}) {
+    const epochs = options.epochs ?? 1200;
+    const learningRate = options.learningRate ?? 0.01;
+    const lambda = options.lambda ?? 0.02;
+
+    let w1 = 0;
+    let w2 = 0;
+    let b = 0;
+
+    for (let epoch = 0; epoch < epochs; epoch++) {
+        for (let i = 0; i < points.length; i++) {
+            const x1 = points[i].x;
+            const x2 = points[i].y;
+            const y = labels[i];
+            const margin = y * (w1 * x1 + w2 * x2 + b);
+
+            if (margin >= 1) {
+                w1 -= learningRate * (2 * lambda * w1);
+                w2 -= learningRate * (2 * lambda * w2);
+            } else {
+                w1 -= learningRate * (2 * lambda * w1 - y * x1);
+                w2 -= learningRate * (2 * lambda * w2 - y * x2);
+                b += learningRate * y;
+            }
+        }
+    }
+
+    return { w1, w2, b };
 }
 
 function render(withBoundary) {
@@ -36,49 +59,58 @@ function render(withBoundary) {
     ];
 
     if (withBoundary) {
-        const mA = meanPoint(svmA);
-        const mB = meanPoint(svmB);
-        const mid = { x: (mA.x + mB.x) / 2, y: (mA.y + mB.y) / 2 };
+        const trainingPoints = [...svmA, ...svmB];
+        const labels = [...Array(svmA.length).fill(-1), ...Array(svmB.length).fill(1)];
+        const model = trainLinearSvm(trainingPoints, labels);
 
-        const dx = mB.x - mA.x;
-        const dy = mB.y - mA.y;
+        const eps = 1e-8;
+        const { w1, w2, b } = model;
 
-        const nx = -dy;
-        const ny = dx;
-        const norm = Math.sqrt(nx * nx + ny * ny) || 1;
-        const ux = nx / norm;
-        const uy = ny / norm;
+        let decisionX;
+        let marginPosX;
+        let marginNegX;
+        let decisionY;
+        let marginPosY;
+        let marginNegY;
 
-        const length = 8;
-        const marginShift = 0.7;
-
-        const lineEnds = [
-            { x: mid.x - ux * length, y: mid.y - uy * length },
-            { x: mid.x + ux * length, y: mid.y + uy * length }
-        ];
-
-        const margin1 = lineEnds.map((p) => ({ x: p.x + (dx / (Math.sqrt(dx * dx + dy * dy) || 1)) * marginShift, y: p.y + (dy / (Math.sqrt(dx * dx + dy * dy) || 1)) * marginShift }));
-        const margin2 = lineEnds.map((p) => ({ x: p.x - (dx / (Math.sqrt(dx * dx + dy * dy) || 1)) * marginShift, y: p.y - (dy / (Math.sqrt(dx * dx + dy * dy) || 1)) * marginShift }));
+        if (Math.abs(w2) > eps) {
+            decisionX = [0, 10];
+            decisionY = decisionX.map((x) => (-(w1 * x + b)) / w2);
+            marginPosY = decisionX.map((x) => (-(w1 * x + b - 1)) / w2);
+            marginNegY = decisionX.map((x) => (-(w1 * x + b + 1)) / w2);
+            marginPosX = decisionX;
+            marginNegX = decisionX;
+        } else {
+            const x0 = -b / (w1 || eps);
+            const xPos = (1 - b) / (w1 || eps);
+            const xNeg = (-1 - b) / (w1 || eps);
+            decisionX = [x0, x0];
+            decisionY = [0, 10];
+            marginPosX = [xPos, xPos];
+            marginPosY = [0, 10];
+            marginNegX = [xNeg, xNeg];
+            marginNegY = [0, 10];
+        }
 
         traces.push({
-            x: lineEnds.map((p) => p.x),
-            y: lineEnds.map((p) => p.y),
+            x: decisionX,
+            y: decisionY,
             mode: "lines",
             name: "Decision Boundary",
             line: { color: "#ffffff", width: 3 }
         });
 
         traces.push({
-            x: margin1.map((p) => p.x),
-            y: margin1.map((p) => p.y),
+            x: marginPosX,
+            y: marginPosY,
             mode: "lines",
             name: "Margin",
             line: { color: "#aaaaaa", width: 2, dash: "dot" }
         });
 
         traces.push({
-            x: margin2.map((p) => p.x),
-            y: margin2.map((p) => p.y),
+            x: marginNegX,
+            y: marginNegY,
             mode: "lines",
             showlegend: false,
             line: { color: "#aaaaaa", width: 2, dash: "dot" }
@@ -90,7 +122,14 @@ function render(withBoundary) {
 
 render(false);
 
+function resetVisualization() {
+    render(false);
+    document.getElementById("status").innerText = "Ready";
+}
+
 document.getElementById("fitBtn").addEventListener("click", () => {
     render(true);
     document.getElementById("status").innerText = "Boundary and margins rendered";
 });
+
+document.getElementById("resetBtn").addEventListener("click", resetVisualization);

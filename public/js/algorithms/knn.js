@@ -47,6 +47,11 @@ function render() {
     Plotly.newPlot("plot", buildBaseTraces(), layout);
 }
 
+function resetVisualization() {
+    document.getElementById("status").innerText = "Ready";
+    render();
+}
+
 render();
 
 document.getElementById("classifyBtn").addEventListener("click", () => {
@@ -87,4 +92,7 @@ document.getElementById("classifyBtn").addEventListener("click", () => {
     ];
 
     Plotly.react("plot", traces, layout);
+    document.getElementById("status").innerText = `Predicted class: ${predictedClass} using k=${k}`;
 });
+
+document.getElementById("resetBtn").addEventListener("click", resetVisualization);

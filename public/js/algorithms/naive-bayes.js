@@ -103,6 +103,13 @@ function classify() {
     document.getElementById("status").innerText = `Predicted: ${predicted} (P1=${p1.toFixed(3)})`;
 }
 
+function resetVisualization() {
+    renderScatter();
+    renderPosterior(0.5, 0.5);
+    document.getElementById("status").innerText = "Ready";
+}
+
 renderScatter();
 renderPosterior(0.5, 0.5);
 document.getElementById("classifyBtn").addEventListener("click", classify);
+document.getElementById("resetBtn").addEventListener("click", resetVisualization);

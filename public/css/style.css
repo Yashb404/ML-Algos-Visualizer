@@ -135,15 +135,20 @@ body {
   color: var(--dim-paper);
   display: block;
   padding: 0.6rem 0.5rem;
+  margin: 0.08rem;
   border-radius: 4px;
-  transition: all 0.2s ease;
+  transition: background-color 0.2s ease, color 0.2s ease;
   font-size: 0.9rem;
   font-weight: 500;
 }
 
-.nav-links a:hover,
 .nav-links a.active {
   background-color: var(--paper);
+  color: var(--void);
+}
+
+.nav-links a:not(.active):hover {
+  background-color: var(--dim-paper);
   color: var(--void);
 }
 
@@ -159,7 +164,7 @@ button {
 }
 
 button:hover:not(:disabled) {
-  background-color: var(--paper);
+  background-color: var(--dark-paper);
   color: var(--void);
 }
 

@@ -1,0 +1,3201 @@
+This file is a merged representation of the entire codebase, combined into a single document by Repomix.
+
+<file_summary>
+This section contains a summary of this file.
+
+<purpose>
+This file contains a packed representation of the entire repository's contents.
+It is designed to be easily consumable by AI systems for analysis, code review,
+or other automated processes.
+</purpose>
+
+<file_format>
+The content is organized as follows:
+1. This summary section
+2. Repository information
+3. Directory structure
+4. Repository files (if enabled)
+5. Multiple file entries, each consisting of:
+  - File path as an attribute
+  - Full contents of the file
+</file_format>
+
+<usage_guidelines>
+- This file should be treated as read-only. Any changes should be made to the
+  original repository files, not this packed version.
+- When processing this file, use the file path to distinguish
+  between different files in the repository.
+- Be aware that this file may contain sensitive information. Handle it with
+  the same level of security as you would the original repository.
+</usage_guidelines>
+
+<notes>
+- Some files may have been excluded based on .gitignore rules and Repomix's configuration
+- Binary files are not included in this packed representation. Please refer to the Repository Structure section for a complete list of file paths, including binary files
+- Files matching patterns in .gitignore are excluded
+- Files matching default ignore patterns are excluded
+- Files are sorted by Git change count (files with more changes are at the bottom)
+</notes>
+
+</file_summary>
+
+<directory_structure>
+public/
+  algorithms/
+    adaboost.html
+    decision-tree.html
+    hierarchical-clustering.html
+    k-means.html
+    knn.html
+    linear-regression.html
+    logistic-regression.html
+    multiple-linear-regression.html
+    naive-bayes.html
+    random-forest.html
+    svm.html
+  css/
+    style.css
+  js/
+    algorithms/
+      adaboost.js
+      decision-tree.js
+      hierarchical-clustering.js
+      k-means.js
+      knn.js
+      linear-regression.js
+      logistic-regression.js
+      multiple-linear-regression.js
+      naive-bayes.js
+      random-forest.js
+      svm.js
+    main.js
+  index.html
+.gitignore
+CONTRIBUTING.md
+package.json
+README.md
+server.js
+</directory_structure>
+
+<files>
+This section contains the contents of the repository's files.
+
+<file path="public/js/main.js">
+console.log('ML Visualizer Loaded');
+// Future: Shared logic for sidebar toggles, theme switching
+</file>
+
+<file path=".gitignore">
+/node_modules
+</file>
+
+<file path="CONTRIBUTING.md">
+# Contributing to ML Visualizer
+
+We welcome contributions! The project is designed to be modular so you can easily add new ML algorithms.
+
+## How to Add a New Algorithm
+
+The file structure for algorithms is strict to ensure consistency.
+
+### 1. Create the Logic File
+
+Create a new JavaScript file in `public/js/algorithms/`.
+Example: `public/js/algorithms/k-means.js`
+
+This file should handle:
+
+- Data generation/loading.
+- Chart initialization (Plotly/Chart.js).
+- TensorFlow.js model creation and training loop.
+- UI updates (loss selection, animations).
+
+### 2. Create the View File
+
+Create a new HTML file in `public/algorithms/`.
+Example: `public/algorithms/k-means.html`
+
+Copy the structure from `linear-regression.html`:
+
+- Use the sidebar navigation.
+- Link the styles: `<link rel="stylesheet" href="../css/style.css">`.
+- Link your specific script: `<script src="../js/algorithms/k-means.js"></script>`.
+- Add any algorithm-specific controls (buttons, inputs).
+
+### 3. Update Global Navigation (Optional)
+
+If you want your algorithm to be listed on the home page or sidebar, update:
+
+- `public/index.html`
+- The sidebar in `public/algorithms/*.html` files (we currently duplicate the sidebar in HTML for simplicity, though a shared JS loader could be used in the future).
+
+## Style Guide
+
+- **Colors**: Use the CSS variables defined in `style.css` (`--accent-color`, `--bg-color`).
+- **Charts**: Use a dark theme for charts to match the UI.
+</file>
+
+<file path="package.json">
+{
+    "name": "ml-visualizer",
+    "version": "1.0.0",
+    "description": "A modular, open-source friendly Machine Learning visualizer",
+    "main": "server.js",
+    "scripts": {
+        "start": "node server.js",
+        "dev": "nodemon server.js"
+    },
+    "dependencies": {
+        "express": "^4.18.2"
+    },
+    "devDependencies": {
+        "nodemon": "^3.0.1"
+    },
+    "engines": {
+        "node": ">=14.0.0"
+    },
+    "author": "",
+    "license": "MIT"
+}
+</file>
+
+<file path="server.js">
+const express = require('express');
+const path = require('path');
+const app = express();
+const PORT = process.env.PORT || 3000;
+
+// Serve static files from the 'public' directory
+app.use(express.static(path.join(__dirname, 'public')));
+
+// Fallback to index.html for any other requests (optional, mostly for SPA, but good to have)
+app.get('/', (req, res) => {
+    res.sendFile(path.join(__dirname, 'public', 'index.html'));
+});
+
+app.listen(PORT, () => {
+    console.log(`Server is running on port ${PORT}`);
+    console.log(`http://localhost:${PORT}`);
+});
+</file>
+
+<file path="public/js/algorithms/adaboost.js">
+const boostPoints = [
+    { x: 1.2, y: -1 }, { x: 2.0, y: -1 }, { x: 2.5, y: -1 }, { x: 3.0, y: -1 },
+    { x: 3.8, y: 1 }, { x: 4.6, y: -1 }, { x: 5.0, y: 1 }, { x: 5.7, y: 1 },
+    { x: 6.2, y: 1 }, { x: 7.1, y: 1 }
+];
+
+const stumps = [3.4, 4.4, 5.4];
+let round = 0;
+let weights = Array(boostPoints.length).fill(1 / boostPoints.length);
+
+const layout = {
+    title: "Weighted Samples and Weak Learners",
+    paper_bgcolor: "#000000",
+    plot_bgcolor: "#000000",
+    font: { color: "#ffffff" },
+    xaxis: { range: [0, 8], title: "Feature", gridcolor: "#333333" },
+    yaxis: { range: [-1.6, 1.6], tickvals: [-1, 1], ticktext: ["Class -1", "Class +1"], gridcolor: "#333333" }
+};
+
+function stumpPredict(x, threshold) {
+    return x < threshold ? -1 : 1;
+}
+
+function normalize(arr) {
+    const sum = arr.reduce((acc, val) => acc + val, 0) || 1;
+    return arr.map((val) => val / sum);
+}
+
+function updateWeights(threshold) {
+    const newWeights = [...weights];
+    for (let i = 0; i < boostPoints.length; i++) {
+        const p = boostPoints[i];
+        const pred = stumpPredict(p.x, threshold);
+        if (pred !== p.y) {
+            newWeights[i] *= 1.6;
+        } else {
+            newWeights[i] *= 0.85;
+        }
+    }
+    weights = normalize(newWeights);
+}
+
+function render() {
+    const activeThresholds = stumps.slice(0, round);
+    const shapes = activeThresholds.map((t, idx) => ({
+        type: "line",
+        x0: t,
+        y0: -1.6,
+        x1: t,
+        y1: 1.6,
+        line: { color: ["#ffffff", "#aaaaaa", "#666666"][idx], width: 2, dash: "dot" }
+    }));
+
+    const classMinus = boostPoints
+        .map((point, idx) => ({ ...point, w: weights[idx] }))
+        .filter((point) => point.y === -1);
+    const classPlus = boostPoints
+        .map((point, idx) => ({ ...point, w: weights[idx] }))
+        .filter((point) => point.y === 1);
+
+    const traces = [
+        {
+            x: classMinus.map((p) => p.x),
+            y: classMinus.map((p) => p.y),
+            mode: "markers",
+            name: "Class -1",
+            marker: {
+                color: "#2563eb",
+                size: classMinus.map((p) => 10 + p.w * 90)
+            }
+        },
+        {
+            x: classPlus.map((p) => p.x),
+            y: classPlus.map((p) => p.y),
+            mode: "markers",
+            name: "Class +1",
+            marker: {
+                color: "#dc2626",
+                size: classPlus.map((p) => 10 + p.w * 90)
+            }
+        }
+    ];
+
+    Plotly.react("plot", traces, { ...layout, shapes });
+    document.getElementById("status").innerText = `Round: ${round}`;
+}
+
+document.getElementById("stepBtn").addEventListener("click", () => {
+    if (round >= stumps.length) {
+        return;
+    }
+    updateWeights(stumps[round]);
+    round += 1;
+    render();
+});
+
+document.getElementById("resetBtn").addEventListener("click", () => {
+    round = 0;
+    weights = Array(boostPoints.length).fill(1 / boostPoints.length);
+    render();
+});
+
+render();
+</file>
+
+<file path="public/js/algorithms/decision-tree.js">
+const dtPoints = Array.from({ length: 100 }, () => {
+    const x = Math.random() * 10;
+    const y = Math.random() * 10;
+    const cls = x > 5 && y > 5 ? 1 : 0;
+    return { x, y, cls };
+});
+
+let depth = 0;
+
+const baseLayout = {
+    title: "Decision Boundary by Splits",
+    paper_bgcolor: "#000000",
+    plot_bgcolor: "#000000",
+    font: { color: "#ffffff" },
+    xaxis: { range: [0, 10], gridcolor: "#333333" },
+    yaxis: { range: [0, 10], gridcolor: "#333333" }
+};
+
+function makeShapes() {
+    const shapes = [];
+    if (depth >= 1) {
+        shapes.push({ type: "line", x0: 5, y0: 0, x1: 5, y1: 10, line: { color: "#ffffff", width: 3 } });
+    }
+    if (depth >= 2) {
+        shapes.push({ type: "line", x0: 5, y0: 5, x1: 10, y1: 5, line: { color: "#aaaaaa", width: 3 } });
+    }
+    if (depth >= 3) {
+        shapes.push({ type: "line", x0: 0, y0: 6.5, x1: 5, y1: 6.5, line: { color: "#666666", width: 3 } });
+    }
+    return shapes;
+}
+
+function render() {
+    const traces = [
+        {
+            x: dtPoints.filter((p) => p.cls === 0).map((p) => p.x),
+            y: dtPoints.filter((p) => p.cls === 0).map((p) => p.y),
+            mode: "markers",
+            name: "Class 0",
+            marker: { color: "#00bcd4", size: 9 }
+        },
+        {
+            x: dtPoints.filter((p) => p.cls === 1).map((p) => p.x),
+            y: dtPoints.filter((p) => p.cls === 1).map((p) => p.y),
+            mode: "markers",
+            name: "Class 1",
+            marker: { color: "#ff4081", size: 9, symbol: "cross" }
+        }
+    ];
+
+    Plotly.react("plot", traces, { ...baseLayout, shapes: makeShapes() });
+    document.getElementById("status").innerText = `Depth: ${depth}`;
+}
+
+document.getElementById("stepBtn").addEventListener("click", () => {
+    depth = Math.min(3, depth + 1);
+    render();
+});
+
+document.getElementById("resetBtn").addEventListener("click", () => {
+    depth = 0;
+    render();
+});
+
+render();
+</file>
+
+<file path="public/js/algorithms/hierarchical-clustering.js">
+const basePoints = Array.from({ length: 12 }, (_, idx) => ({
+    id: idx,
+    x: 1 + Math.random() * 8,
+    y: 1 + Math.random() * 8
+}));
+
+let clusters = [];
+let mergeLines = [];
+
+function centroid(cluster) {
+    return {
+        x: cluster.points.reduce((sum, p) => sum + p.x, 0) / cluster.points.length,
+        y: cluster.points.reduce((sum, p) => sum + p.y, 0) / cluster.points.length
+    };
+}
+
+function dist(a, b) {
+    return Math.sqrt((a.x - b.x) ** 2 + (a.y - b.y) ** 2);
+}
+
+function resetState() {
+    clusters = basePoints.map((point) => ({ points: [point] }));
+    mergeLines = [];
+}
+
+function findClosestPair() {
+    let best = { i: -1, j: -1, d: Infinity };
+    for (let i = 0; i < clusters.length; i++) {
+        for (let j = i + 1; j < clusters.length; j++) {
+            const c1 = centroid(clusters[i]);
+            const c2 = centroid(clusters[j]);
+            const d = dist(c1, c2);
+            if (d < best.d) {
+                best = { i, j, d, c1, c2 };
+            }
+        }
+    }
+    return best;
+}
+
+function mergeStep() {
+    if (clusters.length <= 1) {
+        return;
+    }
+
+    const pair = findClosestPair();
+    mergeLines.push({ from: pair.c1, to: pair.c2 });
+
+    const merged = {
+        points: [...clusters[pair.i].points, ...clusters[pair.j].points]
+    };
+
+    clusters = clusters.filter((_, idx) => idx !== pair.i && idx !== pair.j);
+    clusters.push(merged);
+}
+
+function render() {
+    const traces = [
+        {
+            x: basePoints.map((p) => p.x),
+            y: basePoints.map((p) => p.y),
+            mode: "markers",
+            type: "scatter",
+            marker: { color: "#00bcd4", size: 10 },
+            name: "Points"
+        },
+        ...mergeLines.map((line, idx) => ({
+            x: [line.from.x, line.to.x],
+            y: [line.from.y, line.to.y],
+            mode: "lines",
+            showlegend: idx === 0,
+            name: "Merge",
+            line: { color: "#888888", width: 2 }
+        }))
+    ];
+
+    Plotly.react("plot", traces, {
+        title: "Bottom-Up Merge Process",
+        paper_bgcolor: "#000000",
+        plot_bgcolor: "#000000",
+        font: { color: "#ffffff" },
+        xaxis: { range: [0, 10], gridcolor: "#333333" },
+        yaxis: { range: [0, 10], gridcolor: "#333333" }
+    });
+
+    document.getElementById("status").innerText = `Clusters: ${clusters.length}`;
+}
+
+document.getElementById("stepBtn").addEventListener("click", () => {
+    mergeStep();
+    render();
+});
+
+document.getElementById("resetBtn").addEventListener("click", () => {
+    resetState();
+    render();
+});
+
+resetState();
+render();
+</file>
+
+<file path="public/js/algorithms/k-means.js">
+// Simulated Iris dataset using petal length (x) and width (y) like cluster regions.
+const generateIrisData = () => {
+    const generatedData = [];
+    const addCluster = (cx, cy, spread, count) => {
+        for (let i = 0; i < count; i++) {
+            generatedData.push({
+                x: cx + (Math.random() - 0.5) * spread,
+                y: cy + (Math.random() - 0.5) * spread * 0.5
+            });
+        }
+    };
+
+    addCluster(1.5, 0.3, 1.0, 50);
+    addCluster(4.0, 1.3, 1.5, 50);
+    addCluster(5.5, 2.0, 1.5, 50);
+    return generatedData;
+};
+
+let data = generateIrisData();
+let k = 3;
+let centroids = [];
+let assignments = new Array(data.length).fill(-1);
+let isConverged = false;
+let stepState = "assign";
+
+const colors = ["#00bcd4", "#ff4081", "#00e676", "#ffeb3b"];
+
+const layout = {
+    title: "K-Means Iteration",
+    paper_bgcolor: "#000000",
+    plot_bgcolor: "#000000",
+    font: { color: "#ffffff" },
+    xaxis: { title: "Petal Length (Scaled)", showgrid: true, gridcolor: "#333333" },
+    yaxis: { title: "Petal Width (Scaled)", showgrid: true, gridcolor: "#333333" },
+    showlegend: false,
+    hovermode: false
+};
+
+function renderPlot() {
+    const traces = [];
+
+    for (let c = 0; c < Math.max(k, 1); c++) {
+        const clusterPoints = data.filter((_, i) => assignments[i] === c || (assignments[i] === -1 && c === 0));
+        traces.push({
+            x: clusterPoints.map((point) => point.x),
+            y: clusterPoints.map((point) => point.y),
+            mode: "markers",
+            type: "scatter",
+            marker: {
+                size: 8,
+                color: assignments.includes(-1) ? "#9e9e9e" : colors[c],
+                opacity: 0.75
+            }
+        });
+    }
+
+    if (centroids.length > 0) {
+        traces.push({
+            x: centroids.map((centroid) => centroid.x),
+            y: centroids.map((centroid) => centroid.y),
+            mode: "markers",
+            type: "scatter",
+            marker: {
+                size: 18,
+                color: colors.slice(0, k),
+                symbol: "x",
+                line: { color: "#ffffff", width: 2 }
+            }
+        });
+    }
+
+    Plotly.react("plot", traces, layout);
+}
+
+function getDistance(pointA, pointB) {
+    return Math.sqrt((pointA.x - pointB.x) ** 2 + (pointA.y - pointB.y) ** 2);
+}
+
+function initializeCentroids() {
+    k = parseInt(document.getElementById("kValue").value, 10);
+    assignments = new Array(data.length).fill(-1);
+    isConverged = false;
+    stepState = "assign";
+
+    const shuffled = [...data].sort(() => 0.5 - Math.random());
+    centroids = shuffled.slice(0, k).map((point) => ({ ...point }));
+
+    document.getElementById("status").innerText = `Initialized K=${k}`;
+    document.getElementById("stepBtn").disabled = false;
+    document.getElementById("runBtn").disabled = false;
+    renderPlot();
+}
+
+function resetVisualization() {
+    data = generateIrisData();
+    k = parseInt(document.getElementById("kValue").value, 10);
+    centroids = [];
+    assignments = new Array(data.length).fill(-1);
+    isConverged = false;
+    stepState = "assign";
+
+    document.getElementById("status").innerText = "Ready";
+    document.getElementById("stepBtn").disabled = true;
+    document.getElementById("runBtn").disabled = true;
+    renderPlot();
+}
+
+function stepKMeans() {
+    if (isConverged) {
+        return;
+    }
+
+    if (stepState === "assign") {
+        let changed = false;
+        for (let i = 0; i < data.length; i++) {
+            let minDist = Infinity;
+            let minIndex = -1;
+
+            for (let j = 0; j < k; j++) {
+                const distance = getDistance(data[i], centroids[j]);
+                if (distance < minDist) {
+                    minDist = distance;
+                    minIndex = j;
+                }
+            }
+
+            if (assignments[i] !== minIndex) {
+                assignments[i] = minIndex;
+                changed = true;
+            }
+        }
+
+        document.getElementById("status").innerText = "Points assigned to nearest centroid.";
+        if (!changed) {
+            isConverged = true;
+            document.getElementById("status").innerText = "Converged!";
+            document.getElementById("stepBtn").disabled = true;
+            document.getElementById("runBtn").disabled = true;
+        }
+        stepState = "update";
+    } else {
+        const newCentroids = Array.from({ length: k }, () => ({ x: 0, y: 0, count: 0 }));
+
+        for (let i = 0; i < data.length; i++) {
+            const cluster = assignments[i];
+            if (cluster >= 0) {
+                newCentroids[cluster].x += data[i].x;
+                newCentroids[cluster].y += data[i].y;
+                newCentroids[cluster].count += 1;
+            }
+        }
+
+        for (let j = 0; j < k; j++) {
+            if (newCentroids[j].count > 0) {
+                centroids[j].x = newCentroids[j].x / newCentroids[j].count;
+                centroids[j].y = newCentroids[j].y / newCentroids[j].count;
+            }
+        }
+
+        document.getElementById("status").innerText = "Centroids moved to cluster centers.";
+        stepState = "assign";
+    }
+
+    renderPlot();
+}
+
+async function runToConvergence() {
+    document.getElementById("stepBtn").disabled = true;
+    document.getElementById("runBtn").disabled = true;
+
+    while (!isConverged) {
+        stepKMeans();
+        await new Promise((resolve) => setTimeout(resolve, 400));
+    }
+}
+
+document.getElementById("initBtn").addEventListener("click", initializeCentroids);
+document.getElementById("stepBtn").addEventListener("click", stepKMeans);
+document.getElementById("runBtn").addEventListener("click", runToConvergence);
+document.getElementById("resetBtn").addEventListener("click", resetVisualization);
+
+renderPlot();
+</file>
+
+<file path="public/js/algorithms/knn.js">
+const points = [];
+for (let i = 0; i < 30; i++) {
+    points.push({ x: 2 + Math.random() * 3, y: 2 + Math.random() * 3, class: 0 });
+}
+for (let i = 0; i < 30; i++) {
+    points.push({ x: 6 + Math.random() * 3, y: 6 + Math.random() * 3, class: 1 });
+}
+
+const targetPoint = { x: 5, y: 5 };
+
+const layout = {
+    title: "KNN Classification",
+    paper_bgcolor: "#000000",
+    plot_bgcolor: "#000000",
+    font: { color: "#ffffff" },
+    xaxis: { range: [0, 10], showgrid: true, gridcolor: "#333333" },
+    yaxis: { range: [0, 10], showgrid: true, gridcolor: "#333333" }
+};
+
+function buildBaseTraces() {
+    return [
+        {
+            x: points.filter((p) => p.class === 0).map((p) => p.x),
+            y: points.filter((p) => p.class === 0).map((p) => p.y),
+            mode: "markers",
+            name: "Class 0",
+            marker: { color: "#00bcd4", size: 10 }
+        },
+        {
+            x: points.filter((p) => p.class === 1).map((p) => p.x),
+            y: points.filter((p) => p.class === 1).map((p) => p.y),
+            mode: "markers",
+            name: "Class 1",
+            marker: { color: "#ff4081", size: 10, symbol: "cross" }
+        },
+        {
+            x: [targetPoint.x],
+            y: [targetPoint.y],
+            mode: "markers",
+            name: "Target",
+            marker: { color: "#ffeb3b", size: 15, symbol: "star" }
+        }
+    ];
+}
+
+function render() {
+    Plotly.newPlot("plot", buildBaseTraces(), layout);
+}
+
+function syncTargetFromInputs() {
+    const x = parseFloat(document.getElementById("targetXInput").value);
+    const y = parseFloat(document.getElementById("targetYInput").value);
+
+    if (!Number.isFinite(x) || !Number.isFinite(y)) {
+        return false;
+    }
+
+    targetPoint.x = Math.max(0, Math.min(10, x));
+    targetPoint.y = Math.max(0, Math.min(10, y));
+    return true;
+}
+
+function resetVisualization() {
+    document.getElementById("targetXInput").value = "5";
+    document.getElementById("targetYInput").value = "5";
+    targetPoint.x = 5;
+    targetPoint.y = 5;
+    document.getElementById("status").innerText = "Ready";
+    render();
+}
+
+render();
+
+document.getElementById("classifyBtn").addEventListener("click", () => {
+    if (!syncTargetFromInputs()) {
+        document.getElementById("status").innerText = "Enter valid target coordinates";
+        return;
+    }
+
+    const kInput = parseInt(document.getElementById("kInput").value, 10);
+    const k = Math.max(1, Math.min(points.length, kInput || 1));
+
+    const sorted = points
+        .map((p) => ({ ...p, dist: Math.sqrt((p.x - targetPoint.x) ** 2 + (p.y - targetPoint.y) ** 2) }))
+        .sort((a, b) => a.dist - b.dist);
+
+    const neighbors = sorted.slice(0, k);
+    const classVotes = neighbors.reduce((acc, item) => {
+        acc[item.class] = (acc[item.class] || 0) + 1;
+        return acc;
+    }, {});
+
+    const predictedClass = (classVotes[1] || 0) > (classVotes[0] || 0) ? 1 : 0;
+    const lineColor = predictedClass === 1 ? "#ff4081" : "#00bcd4";
+
+    const neighborLines = neighbors.map((neighbor) => ({
+        x: [targetPoint.x, neighbor.x],
+        y: [targetPoint.y, neighbor.y],
+        mode: "lines",
+        showlegend: false,
+        line: { color: "#aaaaaa", dash: "dot", width: 2 }
+    }));
+
+    const traces = [
+        ...buildBaseTraces(),
+        {
+            x: [targetPoint.x],
+            y: [targetPoint.y],
+            mode: "markers",
+            name: `Predicted Class: ${predictedClass}`,
+            marker: { color: lineColor, size: 18, symbol: "star", line: { color: "white", width: 1 } }
+        },
+        ...neighborLines
+    ];
+
+    Plotly.react("plot", traces, layout);
+    document.getElementById("status").innerText = `Predicted class: ${predictedClass} using k=${k}`;
+});
+
+document.getElementById("resetBtn").addEventListener("click", resetVisualization);
+document.getElementById("targetXInput").addEventListener("change", () => {
+    if (syncTargetFromInputs()) {
+        render();
+    }
+});
+document.getElementById("targetYInput").addEventListener("change", () => {
+    if (syncTargetFromInputs()) {
+        render();
+    }
+});
+</file>
+
+<file path="public/js/algorithms/linear-regression.js">
+// Hardcoded dummy data
+const data = [
+    { x: 1, y: 2 },
+    { x: 2, y: 3.8 },
+    { x: 3, y: 6.2 },
+    { x: 4, y: 8.1 },
+    { x: 5, y: 11 },
+    { x: 6, y: 13 },
+    { x: 7, y: 14.5 },
+    { x: 8, y: 17 },
+    { x: 9, y: 18.2 },
+    { x: 10, y: 21 }
+];
+
+// Extract x and y values for plotting
+const xValues = data.map(d => d.x);
+const yValues = data.map(d => d.y);
+
+// --- Plotly Visualization ---
+const trace1 = {
+    x: xValues,
+    y: yValues,
+    mode: 'markers',
+    type: 'scatter',
+    name: 'Data Points',
+    marker: { size: 10, color: '#00bcd4' }
+};
+
+const layout = {
+    title: 'Linear Regression Data',
+    paper_bgcolor: '#000000',
+    plot_bgcolor: '#000000',
+    font: { color: '#ffffff' },
+    xaxis: { title: 'X', showgrid: true, gridcolor: '#333333' },
+    yaxis: { title: 'Y', showgrid: true, gridcolor: '#333333' },
+    showlegend: true
+};
+
+// Initial Render
+Plotly.newPlot('plot', [trace1], layout);
+
+// --- TensorFlow.js Model ---
+let model;
+let isTraining = false;
+
+function resetVisualization() {
+    if (model) {
+        model.dispose();
+        model = null;
+    }
+
+    isTraining = false;
+    document.getElementById('trainBtn').disabled = false;
+    document.getElementById('status').innerText = 'Ready to train';
+    document.getElementById('loss').innerText = 'Loss: -';
+    Plotly.react('plot', [trace1], layout);
+}
+
+function predictFromInput() {
+    if (!model) {
+        document.getElementById('status').innerText = 'Train the model first';
+        return;
+    }
+
+    const inputValue = parseFloat(document.getElementById('xInput').value);
+    if (!Number.isFinite(inputValue)) {
+        document.getElementById('status').innerText = 'Enter a valid X value';
+        return;
+    }
+
+    const xTensor = tf.tensor2d([inputValue], [1, 1]);
+    const yTensor = model.predict(xTensor);
+    const predictedY = yTensor.dataSync()[0];
+    xTensor.dispose();
+    yTensor.dispose();
+
+    document.getElementById('status').innerText = `Prediction: y=${predictedY.toFixed(3)} for x=${inputValue}`;
+}
+
+function createModel() {
+    const model = tf.sequential();
+    model.add(tf.layers.dense({ units: 1, inputShape: [1] }));
+
+    // Choose an optimizer and loss function
+    model.compile({
+        optimizer: tf.train.sgd(0.01), // Stochastic Gradient Descent
+        loss: 'meanSquaredError'
+    });
+
+    return model;
+}
+
+async function trainModel() {
+    if (isTraining) return;
+    isTraining = true;
+
+    const trainBtn = document.getElementById('trainBtn');
+    const statusSpan = document.getElementById('status');
+    const lossSpan = document.getElementById('loss');
+
+    trainBtn.disabled = true;
+    statusSpan.innerText = "Training...";
+
+    // Convert data to Tensors
+    const xs = tf.tensor2d(xValues, [xValues.length, 1]);
+    const ys = tf.tensor2d(yValues, [yValues.length, 1]);
+
+    model = createModel();
+
+    // Train the model
+    await model.fit(xs, ys, {
+        epochs: 50,
+        callbacks: {
+            onEpochEnd: async (epoch, logs) => {
+                lossSpan.innerText = `Epoch: ${epoch + 1} - Loss: ${logs.loss.toFixed(4)}`;
+
+                // Visualize current prediction line
+                const xPred = [0, 11];
+                const xPredTensor = tf.tensor2d(xPred, [2, 1]);
+                const yPredTensor = model.predict(xPredTensor);
+                const yPred = Array.from(yPredTensor.dataSync());
+
+                const trace2 = {
+                    x: xPred,
+                    y: yPred,
+                    mode: 'lines',
+                    type: 'scatter',
+                    name: 'Regression Line',
+                    line: { color: '#888888', width: 2 }
+                };
+
+                // Use Plotly.animate or react for smoother updates, but react is simpler here
+                Plotly.react('plot', [trace1, trace2], layout);
+
+                // Clean up tensors inside loop if needed, but for small data it's fine.
+                xPredTensor.dispose();
+                yPredTensor.dispose();
+
+                // Small delay to make animation visible
+                await new Promise(resolve => setTimeout(resolve, 100));
+            }
+        }
+    });
+
+    statusSpan.innerText = "Training Complete";
+    trainBtn.disabled = false;
+    isTraining = false;
+
+    xs.dispose();
+    ys.dispose();
+}
+
+document.getElementById('trainBtn').addEventListener('click', trainModel);
+document.getElementById('resetBtn').addEventListener('click', resetVisualization);
+document.getElementById('predictBtn').addEventListener('click', predictFromInput);
+</file>
+
+<file path="public/js/algorithms/logistic-regression.js">
+const data = [
+    { x: 1, y: 0 }, { x: 2, y: 0 }, { x: 3, y: 0 }, { x: 4, y: 0 }, { x: 4.5, y: 1 },
+    { x: 5, y: 0 }, { x: 6, y: 1 }, { x: 7, y: 1 }, { x: 8, y: 1 }, { x: 9, y: 1 }
+];
+
+const xValues = data.map((point) => point.x);
+const yValues = data.map((point) => point.y);
+
+const layout = {
+    title: "Logistic Regression (Sigmoid Curve)",
+    paper_bgcolor: "#000000",
+    plot_bgcolor: "#000000",
+    font: { color: "#ffffff" },
+    xaxis: { title: "Feature (X)", showgrid: true, gridcolor: "#333333" },
+    yaxis: { title: "Probability (Class 1)", showgrid: true, gridcolor: "#333333", range: [-0.1, 1.1] }
+};
+
+const traceData = {
+    x: xValues,
+    y: yValues,
+    mode: "markers",
+    type: "scatter",
+    name: "Data",
+    marker: { size: 10, color: "#00bcd4" }
+};
+
+Plotly.newPlot("plot", [traceData], layout);
+
+let model;
+
+function resetVisualization() {
+    if (model) {
+        model.dispose();
+        model = null;
+    }
+
+    document.getElementById("trainBtn").disabled = false;
+    document.getElementById("status").innerText = "Ready to train";
+    document.getElementById("loss").innerText = "Loss: -";
+    Plotly.react("plot", [traceData], layout);
+}
+
+function predictFromInput() {
+    if (!model) {
+        document.getElementById("status").innerText = "Train the model first";
+        return;
+    }
+
+    const inputValue = parseFloat(document.getElementById("xInput").value);
+    if (!Number.isFinite(inputValue)) {
+        document.getElementById("status").innerText = "Enter a valid X value";
+        return;
+    }
+
+    const xTensor = tf.tensor2d([inputValue], [1, 1]);
+    const yTensor = model.predict(xTensor);
+    const prob = yTensor.dataSync()[0];
+    xTensor.dispose();
+    yTensor.dispose();
+
+    const cls = prob >= 0.5 ? 1 : 0;
+    document.getElementById("status").innerText = `Prediction: class=${cls}, p=${prob.toFixed(3)} for x=${inputValue}`;
+}
+
+async function trainModel() {
+    const button = document.getElementById("trainBtn");
+    button.disabled = true;
+    document.getElementById("status").innerText = "Training...";
+
+    const xs = tf.tensor2d(xValues, [xValues.length, 1]);
+    const ys = tf.tensor2d(yValues, [yValues.length, 1]);
+
+    model = tf.sequential();
+    model.add(tf.layers.dense({ units: 1, inputShape: [1], activation: "sigmoid" }));
+    model.compile({ optimizer: tf.train.adam(0.1), loss: "binaryCrossentropy" });
+
+    await model.fit(xs, ys, {
+        epochs: 100,
+        callbacks: {
+            onEpochEnd: async (epoch, logs) => {
+                document.getElementById("loss").innerText = `Epoch: ${epoch + 1} - Loss: ${logs.loss.toFixed(4)}`;
+
+                const xLine = Array.from({ length: 100 }, (_, i) => i * 0.1);
+                const xPredTensor = tf.tensor2d(xLine, [100, 1]);
+                const yLine = Array.from(model.predict(xPredTensor).dataSync());
+
+                const traceCurve = {
+                    x: xLine,
+                    y: yLine,
+                    mode: "lines",
+                    name: "Sigmoid Probability",
+                    line: { color: "#888888", width: 3 }
+                };
+
+                Plotly.react("plot", [traceData, traceCurve], layout);
+                xPredTensor.dispose();
+                await new Promise((resolve) => setTimeout(resolve, 20));
+            }
+        }
+    });
+
+    xs.dispose();
+    ys.dispose();
+    document.getElementById("status").innerText = "Training Complete";
+    button.disabled = false;
+}
+
+document.getElementById("trainBtn").addEventListener("click", trainModel);
+document.getElementById("resetBtn").addEventListener("click", resetVisualization);
+document.getElementById("predictBtn").addEventListener("click", predictFromInput);
+</file>
+
+<file path="public/js/algorithms/multiple-linear-regression.js">
+const samples = Array.from({ length: 50 }, (_, i) => {
+    const x1 = 10 + Math.random() * 40;
+    const x2 = 20 + Math.random() * 30;
+    const noise = (Math.random() - 0.5) * 6;
+    const y = 1.4 * x1 + 0.8 * x2 + 15 + noise;
+    return { idx: i + 1, x1, x2, y };
+});
+
+const xData = samples.map((sample) => [sample.x1, sample.x2]);
+const yData = samples.map((sample) => sample.y);
+
+const layout = {
+    title: "Actual vs Predicted (Multiple Regression)",
+    paper_bgcolor: "#000000",
+    plot_bgcolor: "#000000",
+    font: { color: "#ffffff" },
+    xaxis: { title: "Sample Index", gridcolor: "#333333" },
+    yaxis: { title: "Target Value", gridcolor: "#333333" }
+};
+
+const actualTrace = {
+    x: samples.map((sample) => sample.idx),
+    y: yData,
+    mode: "markers",
+    type: "scatter",
+    name: "Actual",
+    marker: { color: "#00bcd4", size: 8 }
+};
+
+Plotly.newPlot("plot", [actualTrace], layout);
+
+let isTraining = false;
+let trainedModel = null;
+
+function resetVisualization() {
+    if (trainedModel) {
+        trainedModel.dispose();
+        trainedModel = null;
+    }
+
+    isTraining = false;
+    document.getElementById("trainBtn").disabled = false;
+    document.getElementById("status").innerText = "Ready to train";
+    document.getElementById("loss").innerText = "Loss: -";
+    Plotly.react("plot", [actualTrace], layout);
+}
+
+function predictFromInput() {
+    if (!trainedModel) {
+        document.getElementById("status").innerText = "Train the model first";
+        return;
+    }
+
+    const x1 = parseFloat(document.getElementById("x1Input").value);
+    const x2 = parseFloat(document.getElementById("x2Input").value);
+    if (!Number.isFinite(x1) || !Number.isFinite(x2)) {
+        document.getElementById("status").innerText = "Enter valid X1 and X2 values";
+        return;
+    }
+
+    const xTensor = tf.tensor2d([[x1, x2]], [1, 2]);
+    const yTensor = trainedModel.predict(xTensor);
+    const predictedY = yTensor.dataSync()[0];
+    xTensor.dispose();
+    yTensor.dispose();
+
+    document.getElementById("status").innerText = `Prediction: y=${predictedY.toFixed(3)} for x1=${x1}, x2=${x2}`;
+}
+
+async function trainModel() {
+    if (isTraining) {
+        return;
+    }
+
+    isTraining = true;
+    const trainBtn = document.getElementById("trainBtn");
+    const statusSpan = document.getElementById("status");
+    const lossSpan = document.getElementById("loss");
+
+    trainBtn.disabled = true;
+    statusSpan.innerText = "Training...";
+
+    const xs = tf.tensor2d(xData, [xData.length, 2]);
+    const ys = tf.tensor2d(yData, [yData.length, 1]);
+
+    const model = tf.sequential();
+    model.add(tf.layers.dense({ units: 1, inputShape: [2] }));
+    model.compile({ optimizer: tf.train.adam(0.08), loss: "meanSquaredError" });
+
+    if (trainedModel) {
+        trainedModel.dispose();
+    }
+    trainedModel = model;
+
+    await model.fit(xs, ys, {
+        epochs: 120,
+        callbacks: {
+            onEpochEnd: async (epoch, logs) => {
+                lossSpan.innerText = `Epoch: ${epoch + 1} - Loss: ${logs.loss.toFixed(3)}`;
+                const predTensor = model.predict(xs);
+                const preds = Array.from(predTensor.dataSync());
+
+                const predTrace = {
+                    x: samples.map((sample) => sample.idx),
+                    y: preds,
+                    mode: "lines",
+                    type: "scatter",
+                    name: "Predicted",
+                    line: { color: "#888888", width: 2 }
+                };
+
+                Plotly.react("plot", [actualTrace, predTrace], layout);
+                predTensor.dispose();
+                await new Promise((resolve) => setTimeout(resolve, 20));
+            }
+        }
+    });
+
+    xs.dispose();
+    ys.dispose();
+    statusSpan.innerText = "Training Complete";
+    trainBtn.disabled = false;
+    isTraining = false;
+}
+
+document.getElementById("trainBtn").addEventListener("click", trainModel);
+document.getElementById("resetBtn").addEventListener("click", resetVisualization);
+document.getElementById("predictBtn").addEventListener("click", predictFromInput);
+</file>
+
+<file path="public/js/algorithms/naive-bayes.js">
+const classA = Array.from({ length: 40 }, () => ({ x: 2 + Math.random() * 2, y: 2 + Math.random() * 2 }));
+const classB = Array.from({ length: 40 }, () => ({ x: 6 + Math.random() * 2, y: 6 + Math.random() * 2 }));
+let target = { x: 5, y: 4.8 };
+
+const layout = {
+    title: "Feature Space",
+    paper_bgcolor: "#000000",
+    plot_bgcolor: "#000000",
+    font: { color: "#ffffff" },
+    xaxis: { range: [0, 10], gridcolor: "#333333" },
+    yaxis: { range: [0, 10], gridcolor: "#333333" }
+};
+
+function mean(values) {
+    return values.reduce((acc, value) => acc + value, 0) / values.length;
+}
+
+function variance(values, avg) {
+    const v = values.reduce((acc, value) => acc + (value - avg) ** 2, 0) / values.length;
+    return Math.max(v, 1e-4);
+}
+
+function gaussianPdf(x, mu, sigma2) {
+    const denom = Math.sqrt(2 * Math.PI * sigma2);
+    return Math.exp(-((x - mu) ** 2) / (2 * sigma2)) / denom;
+}
+
+function getStats(points) {
+    const xs = points.map((p) => p.x);
+    const ys = points.map((p) => p.y);
+    const mx = mean(xs);
+    const my = mean(ys);
+    return {
+        mx,
+        my,
+        vx: variance(xs, mx),
+        vy: variance(ys, my)
+    };
+}
+
+function renderScatter() {
+    Plotly.newPlot("plot", [
+        {
+            x: classA.map((p) => p.x),
+            y: classA.map((p) => p.y),
+            mode: "markers",
+            name: "Class 0",
+            marker: { color: "#00bcd4", size: 9 }
+        },
+        {
+            x: classB.map((p) => p.x),
+            y: classB.map((p) => p.y),
+            mode: "markers",
+            name: "Class 1",
+            marker: { color: "#ff4081", size: 9, symbol: "cross" }
+        },
+        {
+            x: [target.x],
+            y: [target.y],
+            mode: "markers",
+            name: "Target",
+            marker: { color: "#ffeb3b", size: 16, symbol: "star" }
+        }
+    ], layout);
+}
+
+function renderPosterior(p0, p1) {
+    Plotly.react("posterior", [
+        {
+            x: ["Class 0", "Class 1"],
+            y: [p0, p1],
+            type: "bar",
+            marker: { color: ["#ffffff", "#888888"] }
+        }
+    ], {
+        title: "Posterior Probabilities",
+        paper_bgcolor: "#000000",
+        plot_bgcolor: "#000000",
+        font: { color: "#ffffff" },
+        yaxis: { range: [0, 1], gridcolor: "#333333" }
+    });
+}
+
+function classify() {
+    const tx = parseFloat(document.getElementById("targetXInput").value);
+    const ty = parseFloat(document.getElementById("targetYInput").value);
+
+    if (!Number.isFinite(tx) || !Number.isFinite(ty)) {
+        document.getElementById("status").innerText = "Enter valid target coordinates";
+        return;
+    }
+
+    target = {
+        x: Math.max(0, Math.min(10, tx)),
+        y: Math.max(0, Math.min(10, ty))
+    };
+    renderScatter();
+
+    const s0 = getStats(classA);
+    const s1 = getStats(classB);
+
+    const prior0 = classA.length / (classA.length + classB.length);
+    const prior1 = classB.length / (classA.length + classB.length);
+
+    const like0 = gaussianPdf(target.x, s0.mx, s0.vx) * gaussianPdf(target.y, s0.my, s0.vy);
+    const like1 = gaussianPdf(target.x, s1.mx, s1.vx) * gaussianPdf(target.y, s1.my, s1.vy);
+
+    const num0 = like0 * prior0;
+    const num1 = like1 * prior1;
+    const norm = num0 + num1;
+
+    const p0 = num0 / norm;
+    const p1 = num1 / norm;
+    renderPosterior(p0, p1);
+
+    const predicted = p1 > p0 ? "Class 1" : "Class 0";
+    document.getElementById("status").innerText = `Predicted: ${predicted} (P1=${p1.toFixed(3)})`;
+}
+
+function resetVisualization() {
+    target = { x: 5, y: 4.8 };
+    document.getElementById("targetXInput").value = "5";
+    document.getElementById("targetYInput").value = "4.8";
+    renderScatter();
+    renderPosterior(0.5, 0.5);
+    document.getElementById("status").innerText = "Ready";
+}
+
+renderScatter();
+renderPosterior(0.5, 0.5);
+document.getElementById("classifyBtn").addEventListener("click", classify);
+document.getElementById("resetBtn").addEventListener("click", resetVisualization);
+</file>
+
+<file path="public/js/algorithms/random-forest.js">
+const pts = [];
+for (let i = 0; i < 100; i++) {
+    const x = Math.random() * 10;
+    const y = Math.random() * 10;
+    const cls = x > 3 && x < 7 && y > 3 && y < 7 ? 1 : 0;
+    pts.push({ x, y, class: cls });
+}
+
+const layout = {
+    title: "Ensemble Decision Boundary",
+    paper_bgcolor: "#000000",
+    plot_bgcolor: "#000000",
+    font: { color: "#ffffff" },
+    xaxis: { range: [0, 10], showgrid: false },
+    yaxis: { range: [0, 10], showgrid: false }
+};
+
+function giniImpurity(labels) {
+    if (!labels.length) {
+        return 0;
+    }
+
+    const ones = labels.filter((value) => value === 1).length;
+    const p1 = ones / labels.length;
+    const p0 = 1 - p1;
+    return 1 - (p0 * p0 + p1 * p1);
+}
+
+function majorityClass(samples) {
+    const ones = samples.filter((sample) => sample.class === 1).length;
+    return ones >= samples.length - ones ? 1 : 0;
+}
+
+function splitSamples(samples, feature, threshold) {
+    const left = [];
+    const right = [];
+
+    for (const sample of samples) {
+        if (sample[feature] <= threshold) {
+            left.push(sample);
+        } else {
+            right.push(sample);
+        }
+    }
+
+    return { left, right };
+}
+
+function bestSplit(samples, featureNames) {
+    let best = null;
+    let bestGini = Infinity;
+
+    for (const feature of featureNames) {
+        const sortedValues = [...new Set(samples.map((sample) => sample[feature]).sort((a, b) => a - b))];
+        if (sortedValues.length < 2) {
+            continue;
+        }
+
+        for (let i = 0; i < sortedValues.length - 1; i++) {
+            const threshold = (sortedValues[i] + sortedValues[i + 1]) / 2;
+            const { left, right } = splitSamples(samples, feature, threshold);
+            if (!left.length || !right.length) {
+                continue;
+            }
+
+            const leftGini = giniImpurity(left.map((sample) => sample.class));
+            const rightGini = giniImpurity(right.map((sample) => sample.class));
+            const weighted = (left.length / samples.length) * leftGini + (right.length / samples.length) * rightGini;
+
+            if (weighted < bestGini) {
+                bestGini = weighted;
+                best = { feature, threshold, left, right };
+            }
+        }
+    }
+
+    return best;
+}
+
+function buildTree(samples, depth, maxDepth, featureSubsetSize) {
+    const classes = new Set(samples.map((sample) => sample.class));
+    if (depth >= maxDepth || classes.size === 1 || samples.length < 4) {
+        return { leaf: true, prediction: majorityClass(samples) };
+    }
+
+    const allFeatures = ["x", "y"];
+    const shuffled = [...allFeatures].sort(() => Math.random() - 0.5);
+    const selectedFeatures = shuffled.slice(0, Math.max(1, featureSubsetSize));
+    const split = bestSplit(samples, selectedFeatures);
+
+    if (!split) {
+        return { leaf: true, prediction: majorityClass(samples) };
+    }
+
+    return {
+        leaf: false,
+        feature: split.feature,
+        threshold: split.threshold,
+        left: buildTree(split.left, depth + 1, maxDepth, featureSubsetSize),
+        right: buildTree(split.right, depth + 1, maxDepth, featureSubsetSize)
+    };
+}
+
+function predictTree(tree, point) {
+    if (tree.leaf) {
+        return tree.prediction;
+    }
+
+    if (point[tree.feature] <= tree.threshold) {
+        return predictTree(tree.left, point);
+    }
+
+    return predictTree(tree.right, point);
+}
+
+function bootstrapSamples(samples) {
+    const boot = [];
+    for (let i = 0; i < samples.length; i++) {
+        const idx = Math.floor(Math.random() * samples.length);
+        boot.push(samples[idx]);
+    }
+    return boot;
+}
+
+function trainForest(samples, nTrees = 21, maxDepth = 4) {
+    const trees = [];
+    const featureSubsetSize = 1;
+
+    for (let i = 0; i < nTrees; i++) {
+        const boot = bootstrapSamples(samples);
+        trees.push(buildTree(boot, 0, maxDepth, featureSubsetSize));
+    }
+
+    return trees;
+}
+
+function predictForest(trees, point) {
+    const votes = trees.reduce((acc, tree) => acc + predictTree(tree, point), 0);
+    return votes >= trees.length / 2 ? 1 : 0;
+}
+
+function pointTraces() {
+    return [
+        {
+            x: pts.filter((p) => p.class === 0).map((p) => p.x),
+            y: pts.filter((p) => p.class === 0).map((p) => p.y),
+            mode: "markers",
+            name: "Class 0",
+            marker: { color: "#2563eb", line: { color: "#222222", width: 1 } }
+        },
+        {
+            x: pts.filter((p) => p.class === 1).map((p) => p.x),
+            y: pts.filter((p) => p.class === 1).map((p) => p.y),
+            mode: "markers",
+            name: "Class 1",
+            marker: { color: "#dc2626", symbol: "cross", line: { color: "#222222", width: 1 } }
+        }
+    ];
+}
+
+function renderInitial() {
+    document.getElementById("treesInput").value = "25";
+    document.getElementById("depthInput").value = "4";
+    Plotly.newPlot("plot", pointTraces(), layout);
+    document.getElementById("status").innerText = "Ready";
+}
+
+renderInitial();
+
+document.getElementById("renderBtn").addEventListener("click", () => {
+    const treesInput = parseInt(document.getElementById("treesInput").value, 10);
+    const depthInput = parseInt(document.getElementById("depthInput").value, 10);
+
+    if (!Number.isFinite(treesInput) || treesInput < 1 || !Number.isFinite(depthInput) || depthInput < 1) {
+        document.getElementById("status").innerText = "Enter valid tree and depth values";
+        return;
+    }
+
+    const nTrees = Math.max(1, treesInput);
+    const maxDepth = Math.max(1, depthInput);
+    const forest = trainForest(pts, nTrees, maxDepth);
+    const axisValues = Array.from({ length: 21 }, (_, idx) => idx * 0.5);
+    const gridZ = axisValues.map((y) => axisValues.map((x) => {
+        return predictForest(forest, { x, y });
+    }));
+
+    const contour = {
+        z: gridZ,
+        x: axisValues,
+        y: axisValues,
+        type: "contour",
+        colorscale: [
+            [0, "rgba(255, 255, 255, 0.12)"],
+            [1, "rgba(136, 136, 136, 0.18)"]
+        ],
+        showscale: false,
+        line: { width: 0 }
+    };
+
+    Plotly.react("plot", [contour, ...pointTraces()], layout);
+    document.getElementById("status").innerText = `Boundary generated (trees=${nTrees}, depth=${maxDepth})`;
+});
+
+document.getElementById("resetBtn").addEventListener("click", renderInitial);
+</file>
+
+<file path="public/js/algorithms/svm.js">
+const svmA = Array.from({ length: 35 }, () => ({ x: 1 + Math.random() * 3, y: 5 + Math.random() * 3 }));
+const svmB = Array.from({ length: 35 }, () => ({ x: 6 + Math.random() * 3, y: 1 + Math.random() * 3 }));
+
+const layout = {
+    title: "Linear Separation with Margin",
+    paper_bgcolor: "#000000",
+    plot_bgcolor: "#000000",
+    font: { color: "#ffffff" },
+    xaxis: { range: [0, 10], gridcolor: "#333333" },
+    yaxis: { range: [0, 10], gridcolor: "#333333" }
+};
+
+function trainLinearSvm(points, labels, options = {}) {
+    const epochs = options.epochs ?? 1200;
+    const learningRate = options.learningRate ?? 0.01;
+    const lambda = options.lambda ?? 0.02;
+
+    let w1 = 0;
+    let w2 = 0;
+    let b = 0;
+
+    for (let epoch = 0; epoch < epochs; epoch++) {
+        for (let i = 0; i < points.length; i++) {
+            const x1 = points[i].x;
+            const x2 = points[i].y;
+            const y = labels[i];
+            const margin = y * (w1 * x1 + w2 * x2 + b);
+
+            if (margin >= 1) {
+                w1 -= learningRate * (2 * lambda * w1);
+                w2 -= learningRate * (2 * lambda * w2);
+            } else {
+                w1 -= learningRate * (2 * lambda * w1 - y * x1);
+                w2 -= learningRate * (2 * lambda * w2 - y * x2);
+                b += learningRate * y;
+            }
+        }
+    }
+
+    return { w1, w2, b };
+}
+
+function render(withBoundary, options = {}) {
+    const traces = [
+        {
+            x: svmA.map((p) => p.x),
+            y: svmA.map((p) => p.y),
+            mode: "markers",
+            name: "Class -1",
+            marker: { color: "#2563eb", size: 9 }
+        },
+        {
+            x: svmB.map((p) => p.x),
+            y: svmB.map((p) => p.y),
+            mode: "markers",
+            name: "Class +1",
+            marker: { color: "#dc2626", size: 9, symbol: "cross" }
+        }
+    ];
+
+    if (withBoundary) {
+        const trainingPoints = [...svmA, ...svmB];
+        const labels = [...Array(svmA.length).fill(-1), ...Array(svmB.length).fill(1)];
+        const model = trainLinearSvm(trainingPoints, labels, options);
+
+        const eps = 1e-8;
+        const { w1, w2, b } = model;
+
+        let decisionX;
+        let marginPosX;
+        let marginNegX;
+        let decisionY;
+        let marginPosY;
+        let marginNegY;
+
+        if (Math.abs(w2) > eps) {
+            decisionX = [0, 10];
+            decisionY = decisionX.map((x) => (-(w1 * x + b)) / w2);
+            marginPosY = decisionX.map((x) => (-(w1 * x + b - 1)) / w2);
+            marginNegY = decisionX.map((x) => (-(w1 * x + b + 1)) / w2);
+            marginPosX = decisionX;
+            marginNegX = decisionX;
+        } else {
+            const x0 = -b / (w1 || eps);
+            const xPos = (1 - b) / (w1 || eps);
+            const xNeg = (-1 - b) / (w1 || eps);
+            decisionX = [x0, x0];
+            decisionY = [0, 10];
+            marginPosX = [xPos, xPos];
+            marginPosY = [0, 10];
+            marginNegX = [xNeg, xNeg];
+            marginNegY = [0, 10];
+        }
+
+        traces.push({
+            x: decisionX,
+            y: decisionY,
+            mode: "lines",
+            name: "Decision Boundary",
+            line: { color: "#ffffff", width: 3 }
+        });
+
+        traces.push({
+            x: marginPosX,
+            y: marginPosY,
+            mode: "lines",
+            name: "Margin",
+            line: { color: "#aaaaaa", width: 2, dash: "dot" }
+        });
+
+        traces.push({
+            x: marginNegX,
+            y: marginNegY,
+            mode: "lines",
+            showlegend: false,
+            line: { color: "#aaaaaa", width: 2, dash: "dot" }
+        });
+    }
+
+    Plotly.react("plot", traces, layout);
+}
+
+render(false);
+
+function resetVisualization() {
+    document.getElementById("epochsInput").value = "1200";
+    document.getElementById("lrInput").value = "0.01";
+    render(false);
+    document.getElementById("status").innerText = "Ready";
+}
+
+document.getElementById("fitBtn").addEventListener("click", () => {
+    const epochs = parseInt(document.getElementById("epochsInput").value, 10);
+    const learningRate = parseFloat(document.getElementById("lrInput").value);
+
+    if (!Number.isFinite(epochs) || epochs <= 0 || !Number.isFinite(learningRate) || learningRate <= 0) {
+        document.getElementById("status").innerText = "Enter valid epochs and learning rate";
+        return;
+    }
+
+    render(true, { epochs, learningRate });
+    document.getElementById("status").innerText = `Boundary rendered (epochs=${epochs}, lr=${learningRate})`;
+});
+
+document.getElementById("resetBtn").addEventListener("click", resetVisualization);
+</file>
+
+<file path="README.md">
+# ML_VIZ : Machine Learning Algorithm Visualizer
+
+An interactive, browser-first machine learning playground that demonstrates how core algorithms behave step-by-step.
+
+The project focuses on clarity and explainability: each module is isolated, visual, and easy to extend without changing backend logic.
+
+## Highlights
+
+- Interactive algorithm pages with real-time plotting.
+- In-browser model training (TensorFlow.js) where applicable.
+- Custom input controls where supported (for example, prediction inputs, target coordinates, and model hyperparameters).
+- Reset actions across all algorithm pages to restore a clean initial state.
+- Step-wise simulation flows for algorithm internals (for example, assignment/update loops in K-Means).
+- Simple Express static server for fast local development.
+- Modular file structure designed for adding new visualizers quickly.
+
+## Implemented Visualizers
+
+- Linear Regression
+- Multiple Linear Regression
+- Logistic Regression (binary classification sigmoid training)
+- K-Nearest Neighbors (distance-based classification with custom target point)
+- Naive Bayes (probabilistic classification with custom target point)
+- Decision Tree (step-wise feature splits)
+- Support Vector Machine (linear max-margin boundary from hinge-loss optimization)
+- Random Forest (bootstrapped decision trees with majority-vote boundary)
+- AdaBoost (iterative weak learner weighting)
+- K-Means Clustering (iterative centroid updates with selectable $k$)
+- Hierarchical Clustering (agglomerative merge process)
+
+## Interaction Features
+
+- `Reset` is available on every algorithm page.
+- Supported modules include additional user inputs:
+    - Linear Regression: custom `X` prediction input.
+    - Logistic Regression: custom `X` class/probability prediction input.
+    - Multiple Linear Regression: custom `X1`, `X2` prediction input.
+    - KNN: custom target point (`X`, `Y`) for classification.
+    - Naive Bayes: custom target point (`X`, `Y`) for posterior classification.
+    - SVM: custom training hyperparameters (`epochs`, learning rate).
+    - Random Forest: custom ensemble settings (number of trees, max depth).
+
+## Project Structure
+
+```text
+ML-Algos-Visualizer/
+    public/
+        index.html
+        css/
+            style.css
+        algorithms/
+            *.html                # One view per algorithm
+        js/
+            main.js
+            algorithms/
+                *.js                # Logic per algorithm
+    server.js                 # Express static server
+    package.json
+```
+
+## Quick Start
+
+### Prerequisites
+
+- Node.js 14+
+- npm
+
+### Install
+
+```bash
+npm install
+```
+
+### Run
+
+```bash
+npm start
+```
+
+Open <http://localhost:3000>.
+
+For development with auto-restart:
+
+```bash
+npm run dev
+```
+
+## Routing
+
+- Home: `/`
+- Algorithm pages: `/algorithms/<name>.html`
+
+Examples:
+
+- `/algorithms/linear-regression.html`
+- `/algorithms/multiple-linear-regression.html`
+- `/algorithms/logistic-regression.html`
+- `/algorithms/knn.html`
+- `/algorithms/naive-bayes.html`
+- `/algorithms/decision-tree.html`
+- `/algorithms/svm.html`
+- `/algorithms/random-forest.html`
+- `/algorithms/adaboost.html`
+- `/algorithms/k-means.html`
+- `/algorithms/hierarchical-clustering.html`
+
+## Technology Stack
+
+- Backend: Express.js
+- Frontend: HTML, CSS, Vanilla JavaScript
+- Visualization: Plotly.js
+- ML Runtime (selected modules): TensorFlow.js
+
+## Extending the Project
+
+To add a new algorithm module:
+
+1. Add an HTML view under `public/algorithms/`.
+2. Add a JS logic file under `public/js/algorithms/`.
+3. Connect the view to its script.
+4. Add navigation links where needed.
+
+Detailed contribution guidance is available in `CONTRIBUTING.md`.
+
+## License
+
+MIT
+</file>
+
+<file path="public/algorithms/adaboost.html">
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>AdaBoost - ML Visualizer</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <style>
+        .controls {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: var(--secondary-bg);
+            border-radius: 8px;
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        #plot {
+            width: 100%;
+            height: 500px;
+            background-color: var(--bg-color);
+        }
+    </style>
+</head>
+
+<body>
+    <aside class="sidebar">
+        <div class="brand">
+            <h1>ML_VIZ</h1>
+            <span class="version">v1.0</span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="/">Dashboard</a></li>
+            <li class="nav-header">Regression</li>
+            <li><a href="linear-regression.html">Linear Regression</a></li>
+            <li><a href="multiple-linear-regression.html">Multiple Regression</a></li>
+            <li class="nav-header">Classification</li>
+            <li><a href="logistic-regression.html">Logistic Regression</a></li>
+            <li><a href="knn.html">K-Nearest Neighbors</a></li>
+            <li><a href="naive-bayes.html">Naive Bayes</a></li>
+            <li><a href="svm.html">Support Vector Machine</a></li>
+            <li class="nav-header">Ensemble & Trees</li>
+            <li><a href="decision-tree.html">Decision Tree</a></li>
+            <li><a href="random-forest.html">Random Forest</a></li>
+            <li><a href="adaboost.html" class="active">AdaBoost</a></li>
+            <li class="nav-header">Clustering</li>
+            <li><a href="k-means.html">K-Means Clustering</a></li>
+            <li><a href="hierarchical-clustering.html">Hierarchical</a></li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        <div class="card">
+            <h2>AdaBoost (Adaptive Boosting)</h2>
+            <div class="info-panel">
+                <h3>What is happening here?</h3>
+                <p>AdaBoost trains weak learners sequentially. After each round, misclassified points get higher weights so the next learner focuses on hard cases. Point sizes in this plot reflect current weights, and threshold lines show each stump.</p>
+                <a class="learn-more-link" href="https://scikit-learn.org/stable/modules/ensemble.html#adaboost" target="_blank" rel="noopener noreferrer">Learn more</a>
+            </div>
+            <div id="plot"></div>
+            <div class="controls">
+                <button id="stepBtn">Next Boosting Round</button>
+                <button id="resetBtn">Reset</button>
+                <span id="status" style="color: #888;">Round: 0</span>
+            </div>
+        </div>
+    </main>
+
+    <script src="../js/algorithms/adaboost.js"></script>
+</body>
+
+</html>
+</file>
+
+<file path="public/algorithms/decision-tree.html">
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Decision Tree - ML Visualizer</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <style>
+        .controls {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: var(--secondary-bg);
+            border-radius: 8px;
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        #plot {
+            width: 100%;
+            height: 500px;
+            background-color: var(--bg-color);
+        }
+    </style>
+</head>
+
+<body>
+    <aside class="sidebar">
+        <div class="brand">
+            <h1>ML_VIZ</h1>
+            <span class="version">v1.0</span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="/">Dashboard</a></li>
+            <li class="nav-header">Regression</li>
+            <li><a href="linear-regression.html">Linear Regression</a></li>
+            <li><a href="multiple-linear-regression.html">Multiple Regression</a></li>
+            <li class="nav-header">Classification</li>
+            <li><a href="logistic-regression.html">Logistic Regression</a></li>
+            <li><a href="knn.html">K-Nearest Neighbors</a></li>
+            <li><a href="naive-bayes.html">Naive Bayes</a></li>
+            <li><a href="svm.html">Support Vector Machine</a></li>
+            <li class="nav-header">Ensemble & Trees</li>
+            <li><a href="decision-tree.html" class="active">Decision Tree</a></li>
+            <li><a href="random-forest.html">Random Forest</a></li>
+            <li><a href="adaboost.html">AdaBoost</a></li>
+            <li class="nav-header">Clustering</li>
+            <li><a href="k-means.html">K-Means Clustering</a></li>
+            <li><a href="hierarchical-clustering.html">Hierarchical</a></li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        <div class="card">
+            <h2>Decision Tree Splits</h2>
+            <div class="info-panel">
+                <h3>What is happening here?</h3>
+                <p>A decision tree recursively splits feature space to reduce impurity. Each step adds a rule that separates classes better. Use Grow Step to add splits and observe how boundaries become more specific with increasing depth.</p>
+                <a class="learn-more-link" href="https://scikit-learn.org/stable/modules/tree.html" target="_blank" rel="noopener noreferrer">Learn more</a>
+            </div>
+            <div id="plot"></div>
+            <div class="controls">
+                <button id="stepBtn">Grow Tree Step</button>
+                <button id="resetBtn">Reset</button>
+                <span id="status" style="color: #888;">Depth: 0</span>
+            </div>
+        </div>
+    </main>
+
+    <script src="../js/algorithms/decision-tree.js"></script>
+</body>
+
+</html>
+</file>
+
+<file path="public/algorithms/hierarchical-clustering.html">
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Hierarchical Clustering - ML Visualizer</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <style>
+        .controls {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: var(--secondary-bg);
+            border-radius: 8px;
+            display: flex;
+            gap: 0.75rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        #plot {
+            width: 100%;
+            height: 520px;
+            background-color: var(--bg-color);
+        }
+    </style>
+</head>
+
+<body>
+    <aside class="sidebar">
+        <div class="brand">
+            <h1>ML_VIZ</h1>
+            <span class="version">v1.0</span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="/">Dashboard</a></li>
+            <li class="nav-header">Regression</li>
+            <li><a href="linear-regression.html">Linear Regression</a></li>
+            <li><a href="multiple-linear-regression.html">Multiple Regression</a></li>
+            <li class="nav-header">Classification</li>
+            <li><a href="logistic-regression.html">Logistic Regression</a></li>
+            <li><a href="knn.html">K-Nearest Neighbors</a></li>
+            <li><a href="naive-bayes.html">Naive Bayes</a></li>
+            <li><a href="svm.html">Support Vector Machine</a></li>
+            <li class="nav-header">Ensemble & Trees</li>
+            <li><a href="decision-tree.html">Decision Tree</a></li>
+            <li><a href="random-forest.html">Random Forest</a></li>
+            <li><a href="adaboost.html">AdaBoost</a></li>
+            <li class="nav-header">Clustering</li>
+            <li><a href="k-means.html">K-Means Clustering</a></li>
+            <li><a href="hierarchical-clustering.html" class="active">Hierarchical</a></li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        <div class="card">
+            <h2>Hierarchical (Agglomerative) Clustering</h2>
+            <div class="info-panel">
+                <h3>What is happening here?</h3>
+                <p>Agglomerative clustering starts with each point as its own cluster, then repeatedly merges the two closest clusters. Use Merge Step to observe the bottom-up process until all points join one hierarchy.</p>
+                <a class="learn-more-link" href="https://scikit-learn.org/stable/modules/clustering.html#hierarchical-clustering" target="_blank" rel="noopener noreferrer">Learn more</a>
+            </div>
+            <div id="plot"></div>
+            <div class="controls">
+                <button id="stepBtn">Merge Step</button>
+                <button id="resetBtn">Reset</button>
+                <span id="status" style="color: #888;">Clusters: 12</span>
+            </div>
+        </div>
+    </main>
+
+    <script src="../js/algorithms/hierarchical-clustering.js"></script>
+</body>
+
+</html>
+</file>
+
+<file path="public/index.html">
+<!DOCTYPE html>
+<html lang="en">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>ML Visualizer | Void & Paper</title>
+    <link rel="stylesheet" href="css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;500;700;800&display=swap" rel="stylesheet">
+</head>
+<body>
+    <aside class="sidebar">
+        <div class="brand">
+            <h1>ML_VIZ</h1>
+            <span class="version">v1.0</span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="/" class="active">Dashboard</a></li>
+            <li class="nav-header">Regression</li>
+            <li><a href="algorithms/linear-regression.html">Linear Regression</a></li>
+            <li><a href="algorithms/multiple-linear-regression.html">Multiple Regression</a></li>
+            <li class="nav-header">Classification</li>
+            <li><a href="algorithms/logistic-regression.html">Logistic Regression</a></li>
+            <li><a href="algorithms/knn.html">K-Nearest Neighbors</a></li>
+            <li><a href="algorithms/naive-bayes.html">Naive Bayes</a></li>
+            <li><a href="algorithms/svm.html">Support Vector Machine</a></li>
+            <li class="nav-header">Ensemble & Trees</li>
+            <li><a href="algorithms/decision-tree.html">Decision Tree</a></li>
+            <li><a href="algorithms/random-forest.html">Random Forest</a></li>
+            <li><a href="algorithms/adaboost.html">AdaBoost</a></li>
+            <li class="nav-header">Clustering</li>
+            <li><a href="algorithms/k-means.html">K-Means Clustering</a></li>
+            <li><a href="algorithms/hierarchical-clustering.html">Hierarchical</a></li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        <header class="hero-section">
+            <h2 class="hero-title">Algorithm Explorer</h2>
+            <p class="hero-subtitle">Interactive visualizer for core machine learning models. Select a domain below to observe decision boundaries, optimizations, and data clustering in real-time.</p>
+        </header>
+
+        <div class="category-section">
+            <h3 class="section-title">Regression Models</h3>
+            <div class="dashboard-grid">
+                <a href="algorithms/linear-regression.html" class="algo-card">
+                    <h4>Linear Regression</h4>
+                    <p>Minimize Mean Squared Error (MSE) to find the best fit line through continuous 2D data.</p>
+                </a>
+                <a href="algorithms/multiple-linear-regression.html" class="algo-card">
+                    <h4>Multiple Regression</h4>
+                    <p>Map multiple features to continuous outputs, comparing actual vs. predicted values.</p>
+                </a>
+            </div>
+        </div>
+
+        <div class="category-section">
+            <h3 class="section-title">Classification Models</h3>
+            <div class="dashboard-grid">
+                <a href="algorithms/logistic-regression.html" class="algo-card">
+                    <h4>Logistic Regression</h4>
+                    <p>Utilize the Sigmoid function to squash values and estimate binary probabilities.</p>
+                </a>
+                <a href="algorithms/knn.html" class="algo-card">
+                    <h4>K-Nearest Neighbors</h4>
+                    <p>Classify spatial points based on proximity voting and varying K-values.</p>
+                </a>
+                <a href="algorithms/naive-bayes.html" class="algo-card">
+                    <h4>Naive Bayes</h4>
+                    <p>Visualize probabilistic classification leveraging Bayes' theorem and prior distributions.</p>
+                </a>
+                <a href="algorithms/svm.html" class="algo-card">
+                    <h4>Support Vector Machine</h4>
+                    <p>Define robust decision boundaries by visualizing linear max-margin separators.</p>
+                </a>
+            </div>
+        </div>
+
+        <div class="category-section">
+            <h3 class="section-title">Trees & Ensemble</h3>
+            <div class="dashboard-grid">
+                <a href="algorithms/decision-tree.html" class="algo-card">
+                    <h4>Decision Tree</h4>
+                    <p>Grow split-by-split rules observing increasingly specific decision boundaries.</p>
+                </a>
+                <a href="algorithms/random-forest.html" class="algo-card">
+                    <h4>Random Forest</h4>
+                    <p>Aggregate an ensemble of trees to create complex, non-linear classification boundaries.</p>
+                </a>
+                <a href="algorithms/adaboost.html" class="algo-card">
+                    <h4>AdaBoost</h4>
+                    <p>Step through sequential boosting rounds as sample weights shift toward difficult examples.</p>
+                </a>
+            </div>
+        </div>
+
+        <div class="category-section">
+            <h3 class="section-title">Clustering</h3>
+            <div class="dashboard-grid">
+                <a href="algorithms/k-means.html" class="algo-card">
+                    <h4>K-Means Clustering</h4>
+                    <p>Observe assignment and centroid-update phases across varying K configurations.</p>
+                </a>
+                <a href="algorithms/hierarchical-clustering.html" class="algo-card">
+                    <h4>Hierarchical Clustering</h4>
+                    <p>Follow agglomerative merges from singleton data points into a full structural hierarchy.</p>
+                </a>
+            </div>
+        </div>
+    </main>
+
+    <script src="js/main.js"></script>
+</body>
+</html>
+</file>
+
+<file path="public/algorithms/k-means.html">
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>K-Means Clustering - ML Visualizer</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <style>
+        .controls {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: var(--secondary-bg);
+            border-radius: 8px;
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        select {
+            background-color: var(--secondary-bg);
+            color: var(--text-color);
+            border: 1px solid var(--border-color);
+            padding: 0.5rem 1rem;
+            border-radius: 4px;
+            cursor: pointer;
+            font-weight: 600;
+            font-family: 'Inter', sans-serif;
+        }
+
+        select:hover {
+            border-color: #666;
+        }
+
+        #plot {
+            width: 100%;
+            height: 550px;
+            background-color: var(--bg-color);
+        }
+    </style>
+</head>
+
+<body>
+    <aside class="sidebar">
+        <div class="brand">
+            <h1>ML_VIZ</h1>
+            <span class="version">v1.0</span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="/">Dashboard</a></li>
+            <li class="nav-header">Regression</li>
+            <li><a href="linear-regression.html">Linear Regression</a></li>
+            <li><a href="multiple-linear-regression.html">Multiple Regression</a></li>
+            <li class="nav-header">Classification</li>
+            <li><a href="logistic-regression.html">Logistic Regression</a></li>
+            <li><a href="knn.html">K-Nearest Neighbors</a></li>
+            <li><a href="naive-bayes.html">Naive Bayes</a></li>
+            <li><a href="svm.html">Support Vector Machine</a></li>
+            <li class="nav-header">Ensemble & Trees</li>
+            <li><a href="decision-tree.html">Decision Tree</a></li>
+            <li><a href="random-forest.html">Random Forest</a></li>
+            <li><a href="adaboost.html">AdaBoost</a></li>
+            <li class="nav-header">Clustering</li>
+            <li><a href="k-means.html" class="active">K-Means Clustering</a></li>
+            <li><a href="hierarchical-clustering.html">Hierarchical</a></li>
+        </ul>
+    </aside>
+    <main class="main-content">
+        <div class="card">
+            <h2>K-Means Clustering (Iris Dataset Simulation)</h2>
+            <div class="info-panel">
+                <h3>What is happening here?</h3>
+                <p>K-Means alternates between assigning each point to its nearest centroid and updating centroids to the mean of assigned points. Repeat this for k = 2, 3, and 4 to compare how cluster compactness and separation change with the number of groups.</p>
+                <a class="learn-more-link" href="https://scikit-learn.org/stable/modules/clustering.html#k-means" target="_blank" rel="noopener noreferrer">Learn more</a>
+            </div>
+            <p style="color: #aaa; margin-bottom: 1rem;">Visualizing Petal Length vs Petal Width. Notice how the clusters form based on the selected K value.</p>
+            <div id="plot"></div>
+            <div class="controls">
+                <label for="kValue" style="font-weight: 600;">Select K:</label>
+                <select id="kValue">
+                    <option value="2">K = 2</option>
+                    <option value="3" selected>K = 3 (Actual Iris Species)</option>
+                    <option value="4">K = 4</option>
+                </select>
+                <button id="initBtn">Initialize</button>
+                <button id="stepBtn" disabled>Step (Assign &amp; Update)</button>
+                <button id="runBtn" disabled>Run to Convergence</button>
+                <button id="resetBtn">Reset</button>
+                <span id="status" style="margin-left: auto; color: #888;">Ready</span>
+            </div>
+        </div>
+    </main>
+    <script src="../js/algorithms/k-means.js"></script>
+</body>
+
+</html>
+</file>
+
+<file path="public/algorithms/multiple-linear-regression.html">
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Multiple Linear Regression - ML Visualizer</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.15.0/dist/tf.min.js"></script>
+    <style>
+        .controls {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: var(--secondary-bg);
+            border-radius: 8px;
+        }
+
+        #plot {
+            width: 100%;
+            height: 500px;
+            background-color: var(--bg-color);
+        }
+    </style>
+</head>
+
+<body>
+    <aside class="sidebar">
+        <div class="brand">
+            <h1>ML_VIZ</h1>
+            <span class="version">v1.0</span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="/">Dashboard</a></li>
+            <li class="nav-header">Regression</li>
+            <li><a href="linear-regression.html">Linear Regression</a></li>
+            <li><a href="multiple-linear-regression.html" class="active">Multiple Regression</a></li>
+            <li class="nav-header">Classification</li>
+            <li><a href="logistic-regression.html">Logistic Regression</a></li>
+            <li><a href="knn.html">K-Nearest Neighbors</a></li>
+            <li><a href="naive-bayes.html">Naive Bayes</a></li>
+            <li><a href="svm.html">Support Vector Machine</a></li>
+            <li class="nav-header">Ensemble & Trees</li>
+            <li><a href="decision-tree.html">Decision Tree</a></li>
+            <li><a href="random-forest.html">Random Forest</a></li>
+            <li><a href="adaboost.html">AdaBoost</a></li>
+            <li class="nav-header">Clustering</li>
+            <li><a href="k-means.html">K-Means Clustering</a></li>
+            <li><a href="hierarchical-clustering.html">Hierarchical</a></li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        <div class="card">
+            <h2>Multiple Linear Regression</h2>
+            <div class="info-panel">
+                <h3>What is happening here?</h3>
+                <p>Multiple Linear Regression predicts one target using multiple inputs. In this demo, the model learns weights for two features and minimizes mean squared error. The chart compares actual values with model predictions across samples.</p>
+                <a class="learn-more-link" href="https://scikit-learn.org/stable/modules/linear_model.html#ordinary-least-squares" target="_blank" rel="noopener noreferrer">Learn more</a>
+            </div>
+            <div id="plot"></div>
+            <div class="controls">
+                <button id="trainBtn">Train Model</button>
+                <button id="resetBtn">Reset</button>
+                <label for="x1Input" style="margin-left: 0.75rem;">X1:</label>
+                <input type="number" id="x1Input" value="28" step="0.1" style="width: 90px;">
+                <label for="x2Input">X2:</label>
+                <input type="number" id="x2Input" value="35" step="0.1" style="width: 90px;">
+                <button id="predictBtn">Predict Y</button>
+                <span id="status" style="margin-left: 1rem; color: #888;">Ready</span>
+                <span id="loss" style="margin-left: 1rem;"></span>
+            </div>
+        </div>
+    </main>
+
+    <script src="../js/algorithms/multiple-linear-regression.js"></script>
+</body>
+
+</html>
+</file>
+
+<file path="public/algorithms/naive-bayes.html">
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Naive Bayes - ML Visualizer</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <style>
+        .plot-grid {
+            display: grid;
+            grid-template-columns: 2fr 1fr;
+            gap: 1rem;
+        }
+
+        .controls {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: var(--secondary-bg);
+            border-radius: 8px;
+        }
+
+        #plot,
+        #posterior {
+            width: 100%;
+            height: 440px;
+            background-color: var(--bg-color);
+        }
+
+        @media (max-width: 1000px) {
+            .plot-grid {
+                grid-template-columns: 1fr;
+            }
+        }
+    </style>
+</head>
+
+<body>
+    <aside class="sidebar">
+        <div class="brand">
+            <h1>ML_VIZ</h1>
+            <span class="version">v1.0</span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="/">Dashboard</a></li>
+            <li class="nav-header">Regression</li>
+            <li><a href="linear-regression.html">Linear Regression</a></li>
+            <li><a href="multiple-linear-regression.html">Multiple Regression</a></li>
+            <li class="nav-header">Classification</li>
+            <li><a href="logistic-regression.html">Logistic Regression</a></li>
+            <li><a href="knn.html">K-Nearest Neighbors</a></li>
+            <li><a href="naive-bayes.html" class="active">Naive Bayes</a></li>
+            <li><a href="svm.html">Support Vector Machine</a></li>
+            <li class="nav-header">Ensemble & Trees</li>
+            <li><a href="decision-tree.html">Decision Tree</a></li>
+            <li><a href="random-forest.html">Random Forest</a></li>
+            <li><a href="adaboost.html">AdaBoost</a></li>
+            <li class="nav-header">Clustering</li>
+            <li><a href="k-means.html">K-Means Clustering</a></li>
+            <li><a href="hierarchical-clustering.html">Hierarchical</a></li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        <div class="card">
+            <h2>Naive Bayes Classification</h2>
+            <div class="info-panel">
+                <h3>What is happening here?</h3>
+                <p>Naive Bayes estimates class probabilities using Bayes theorem and a strong independence assumption between features. The plot shows two distributions and a target point; the bar chart compares posterior probabilities for each class.</p>
+                <a class="learn-more-link" href="https://scikit-learn.org/stable/modules/naive_bayes.html" target="_blank" rel="noopener noreferrer">Learn more</a>
+            </div>
+
+            <div class="plot-grid">
+                <div id="plot"></div>
+                <div id="posterior"></div>
+            </div>
+
+            <div class="controls">
+                <label for="targetXInput">Target X:</label>
+                <input type="number" id="targetXInput" value="5" min="0" max="10" step="0.1">
+                <label for="targetYInput">Target Y:</label>
+                <input type="number" id="targetYInput" value="4.8" min="0" max="10" step="0.1">
+                <button id="classifyBtn">Classify Target Point</button>
+                <button id="resetBtn">Reset</button>
+                <span id="status" style="margin-left: 1rem; color: #888;">Ready</span>
+            </div>
+        </div>
+    </main>
+
+    <script src="../js/algorithms/naive-bayes.js"></script>
+</body>
+
+</html>
+</file>
+
+<file path="public/algorithms/svm.html">
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>SVM - ML Visualizer</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <style>
+        .controls {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: var(--secondary-bg);
+            border-radius: 8px;
+        }
+
+        #plot {
+            width: 100%;
+            height: 500px;
+            background-color: var(--bg-color);
+        }
+    </style>
+</head>
+
+<body>
+    <aside class="sidebar">
+        <div class="brand">
+            <h1>ML_VIZ</h1>
+            <span class="version">v1.0</span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="/">Dashboard</a></li>
+            <li class="nav-header">Regression</li>
+            <li><a href="linear-regression.html">Linear Regression</a></li>
+            <li><a href="multiple-linear-regression.html">Multiple Regression</a></li>
+            <li class="nav-header">Classification</li>
+            <li><a href="logistic-regression.html">Logistic Regression</a></li>
+            <li><a href="knn.html">K-Nearest Neighbors</a></li>
+            <li><a href="naive-bayes.html">Naive Bayes</a></li>
+            <li><a href="svm.html" class="active">Support Vector Machine</a></li>
+            <li class="nav-header">Ensemble & Trees</li>
+            <li><a href="decision-tree.html">Decision Tree</a></li>
+            <li><a href="random-forest.html">Random Forest</a></li>
+            <li><a href="adaboost.html">AdaBoost</a></li>
+            <li class="nav-header">Clustering</li>
+            <li><a href="k-means.html">K-Means Clustering</a></li>
+            <li><a href="hierarchical-clustering.html">Hierarchical</a></li>
+        </ul>
+    </aside>
+
+    <main class="main-content">
+        <div class="card">
+            <h2>Support Vector Machine (Linear)</h2>
+            <div class="info-panel">
+                <h3>What is happening here?</h3>
+                <p>SVM searches for a separating hyperplane with maximum margin between classes. The central line is the decision boundary and the two dashed lines represent margins. A wider margin generally improves generalization.</p>
+                <a class="learn-more-link" href="https://scikit-learn.org/stable/modules/svm.html" target="_blank" rel="noopener noreferrer">Learn more</a>
+            </div>
+            <div id="plot"></div>
+            <div class="controls">
+                <label for="epochsInput">Epochs:</label>
+                <input type="number" id="epochsInput" value="1200" min="100" step="100" style="width: 90px;">
+                <label for="lrInput">LR:</label>
+                <input type="number" id="lrInput" value="0.01" min="0.001" step="0.001" style="width: 90px;">
+                <button id="fitBtn">Fit Max-Margin Boundary</button>
+                <button id="resetBtn">Reset</button>
+                <span id="status" style="margin-left: 1rem; color: #888;">Ready</span>
+            </div>
+        </div>
+    </main>
+
+    <script src="../js/algorithms/svm.js"></script>
+</body>
+
+</html>
+</file>
+
+<file path="public/css/style.css">
+:root {
+  --void: #000000;
+  --paper: #ffffff;
+  --dim-paper: #cccccc;
+  --border: #333333;
+  --subtle-bg: #0a0a0a;
+  --scroll-track: #050505;
+  --scroll-thumb: #bfbfbf;
+  --scroll-thumb-hover: #ffffff;
+}
+
+body {
+  font-family: 'Inter', sans-serif;
+  background-color: var(--void);
+  color: var(--paper);
+  margin: 0;
+  display: flex;
+  min-height: 100vh;
+  -webkit-font-smoothing: antialiased;
+}
+
+/* --- Sidebar --- */
+.sidebar {
+  width: 280px;
+  background: var(--void);
+  border-right: 1px solid var(--border);
+  display: flex;
+  flex-direction: column;
+  padding: 2rem 1.5rem;
+  z-index: 10;
+  position: sticky;
+  top: 0;
+  height: 100vh;
+  box-sizing: border-box;
+}
+
+.brand {
+  display: flex;
+  align-items: baseline;
+  justify-content: space-between;
+  margin-bottom: 2.5rem;
+  padding-bottom: 1rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.sidebar h1 {
+  font-size: 1.5rem;
+  color: var(--paper);
+  margin: 0;
+  font-weight: 800;
+  letter-spacing: -0.5px;
+}
+
+.version {
+  font-size: 0.75rem;
+  color: var(--dim-paper);
+  font-family: monospace;
+}
+
+.nav-links {
+  list-style: none;
+  padding: 0;
+  margin: 0;
+  overflow-y: auto;
+}
+
+/* Matched monochrome scrollbars for sidebar and homepage scrollers */
+.main-content {
+  scrollbar-width: thin;
+  scrollbar-color: var(--scroll-thumb) var(--scroll-track);
+}
+
+.nav-links {
+  scrollbar-width: thin;
+  scrollbar-color: transparent transparent;
+}
+
+.nav-links::-webkit-scrollbar,
+.main-content::-webkit-scrollbar {
+  width: 10px;
+  height: 10px;
+}
+
+.nav-links::-webkit-scrollbar-track,
+.main-content::-webkit-scrollbar-track {
+  background: var(--scroll-track);
+}
+
+.nav-links::-webkit-scrollbar-thumb,
+.main-content::-webkit-scrollbar-thumb {
+  background: var(--scroll-thumb);
+  border: 2px solid var(--scroll-track);
+  border-radius: 999px;
+}
+
+.nav-links::-webkit-scrollbar-track,
+.nav-links::-webkit-scrollbar-thumb {
+  background: transparent;
+  border-color: transparent;
+}
+
+.sidebar:hover .nav-links {
+  scrollbar-color: var(--scroll-thumb) var(--scroll-track);
+}
+
+.sidebar:hover .nav-links::-webkit-scrollbar-track {
+  background: var(--scroll-track);
+}
+
+.sidebar:hover .nav-links::-webkit-scrollbar-thumb {
+  background: var(--scroll-thumb);
+  border-color: var(--scroll-track);
+}
+
+.sidebar:hover .nav-links::-webkit-scrollbar-thumb:hover {
+  background: var(--scroll-thumb-hover);
+}
+
+.nav-links::-webkit-scrollbar-thumb:hover,
+.main-content::-webkit-scrollbar-thumb:hover {
+  background: var(--scroll-thumb-hover);
+}
+
+.nav-header {
+  font-size: 0.7rem;
+  text-transform: uppercase;
+  letter-spacing: 1.5px;
+  color: #666;
+  margin: 1.5rem 0 0.5rem 0.5rem;
+  font-weight: 700;
+}
+
+.nav-links a {
+  text-decoration: none;
+  color: var(--dim-paper);
+  display: block;
+  padding: 0.6rem 0.5rem;
+  border-radius: 4px;
+  transition: all 0.2s ease;
+  font-size: 0.9rem;
+  font-weight: 500;
+}
+
+.nav-links a:hover,
+.nav-links a.active {
+  background-color: var(--paper);
+  color: var(--void);
+}
+
+button {
+  background-color: var(--void);
+  color: var(--paper);
+  border: 1px solid var(--paper);
+  padding: 0.5rem 1rem;
+  border-radius: 4px;
+  cursor: pointer;
+  font-weight: 600;
+  transition: all 0.2s ease;
+}
+
+button:hover:not(:disabled) {
+  background-color: var(--paper);
+  color: var(--void);
+}
+
+button:disabled {
+  border-color: #333;
+  color: #555;
+  cursor: not-allowed;
+}
+
+.controls label {
+  font-size: 0.85rem;
+  color: var(--dim-paper);
+}
+
+.controls input,
+.controls select {
+  background: var(--void);
+  color: var(--paper);
+  border: 1px solid var(--border);
+  padding: 0.45rem 0.55rem;
+  border-radius: 4px;
+}
+
+.controls input:focus,
+.controls select:focus {
+  outline: 1px solid var(--paper);
+  border-color: var(--paper);
+}
+
+/* --- Main Layout --- */
+.main-content {
+  flex: 1;
+  padding: 4rem;
+  overflow-y: auto;
+  background: var(--void);
+  box-sizing: border-box;
+}
+
+.card {
+  background-color: var(--void);
+  padding: 2rem;
+  border-radius: 4px;
+  border: 1px solid var(--border);
+  margin-bottom: 1.5rem;
+}
+
+.info-panel {
+  background: var(--subtle-bg);
+  border-left: 4px solid var(--paper);
+  padding: 1.5rem;
+  margin-bottom: 1.5rem;
+}
+
+.info-panel h3 {
+  margin-top: 0;
+  color: var(--paper);
+  font-size: 1.1rem;
+}
+
+.info-panel p {
+  line-height: 1.6;
+  color: var(--dim-paper);
+  margin-bottom: 0;
+}
+
+.learn-more-link {
+  display: inline-block;
+  margin-top: 0.9rem;
+  color: var(--paper);
+  text-decoration: none;
+  border: 1px solid var(--paper);
+  padding: 0.35rem 0.65rem;
+  font-size: 0.78rem;
+  text-transform: uppercase;
+  letter-spacing: 0.08em;
+  transition: all 0.2s ease;
+}
+
+.learn-more-link:hover {
+  background: var(--paper);
+  color: var(--void);
+}
+
+.hero-section {
+  margin-bottom: 4rem;
+  max-width: 800px;
+}
+
+.hero-title {
+  font-size: 3rem;
+  font-weight: 800;
+  margin: 0 0 1rem 0;
+  letter-spacing: -1px;
+}
+
+.hero-subtitle {
+  font-size: 1.1rem;
+  line-height: 1.6;
+  color: var(--dim-paper);
+  margin: 0;
+}
+
+/* --- Grid & Cards --- */
+.category-section {
+  margin-bottom: 3.5rem;
+}
+
+.section-title {
+  font-size: 1.2rem;
+  font-weight: 700;
+  color: var(--paper);
+  margin-bottom: 1.5rem;
+  padding-bottom: 0.5rem;
+  border-bottom: 1px solid var(--border);
+}
+
+.dashboard-grid {
+  display: grid;
+  grid-template-columns: repeat(auto-fill, minmax(300px, 1fr));
+  gap: 1.5rem;
+}
+
+.algo-card {
+  background-color: var(--void);
+  border: 1px solid var(--border);
+  padding: 1.5rem;
+  text-decoration: none;
+  color: inherit;
+  display: flex;
+  flex-direction: column;
+  transition: all 0.2s ease;
+}
+
+.algo-card h4 {
+  margin: 0 0 0.75rem 0;
+  font-size: 1.1rem;
+  font-weight: 600;
+  color: var(--paper);
+  transition: color 0.2s ease;
+}
+
+.algo-card p {
+  margin: 0;
+  color: var(--dim-paper);
+  font-size: 0.9rem;
+  line-height: 1.5;
+  transition: color 0.2s ease;
+}
+
+/* Strict Invert on Hover */
+.algo-card:hover {
+  background-color: var(--paper);
+  border-color: var(--paper);
+  transform: translateY(-3px);
+}
+
+.algo-card:hover h4,
+.algo-card:hover p {
+  color: var(--void);
+}
+
+.flex {
+  display: flex;
+}
+
+.gap-4 {
+  gap: 1rem;
+}
+
+/* --- Responsive --- */
+@media (max-width: 900px) {
+  body {
+    flex-direction: column;
+  }
+  .sidebar {
+    width: 100%;
+    height: auto;
+    position: relative;
+    padding: 1rem;
+  }
+  .main-content {
+    padding: 2rem 1rem;
+  }
+  .hero-title {
+    font-size: 2rem;
+  }
+}
+</file>
+
+<file path="public/algorithms/knn.html">
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>KNN - ML Visualizer</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <style>
+        .controls {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: var(--secondary-bg);
+            border-radius: 8px;
+            display: flex;
+            gap: 1rem;
+            align-items: center;
+            flex-wrap: wrap;
+        }
+
+        input {
+            padding: 0.5rem;
+            border-radius: 4px;
+            border: none;
+            width: 60px;
+        }
+
+        #plot {
+            width: 100%;
+            height: 500px;
+            background-color: var(--bg-color);
+        }
+    </style>
+</head>
+
+<body>
+    <aside class="sidebar">
+        <div class="brand">
+            <h1>ML_VIZ</h1>
+            <span class="version">v1.0</span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="/">Dashboard</a></li>
+            <li class="nav-header">Regression</li>
+            <li><a href="linear-regression.html">Linear Regression</a></li>
+            <li><a href="multiple-linear-regression.html">Multiple Regression</a></li>
+            <li class="nav-header">Classification</li>
+            <li><a href="logistic-regression.html">Logistic Regression</a></li>
+            <li><a href="knn.html" class="active">K-Nearest Neighbors</a></li>
+            <li><a href="naive-bayes.html">Naive Bayes</a></li>
+            <li><a href="svm.html">Support Vector Machine</a></li>
+            <li class="nav-header">Ensemble & Trees</li>
+            <li><a href="decision-tree.html">Decision Tree</a></li>
+            <li><a href="random-forest.html">Random Forest</a></li>
+            <li><a href="adaboost.html">AdaBoost</a></li>
+            <li class="nav-header">Clustering</li>
+            <li><a href="k-means.html">K-Means Clustering</a></li>
+            <li><a href="hierarchical-clustering.html">Hierarchical</a></li>
+        </ul>
+    </aside>
+    <main class="main-content">
+        <div class="card">
+            <h2>K-Nearest Neighbors (KNN)</h2>
+            <div class="info-panel">
+                <h3>What is happening here?</h3>
+                <p>KNN classifies a new sample by computing distances to all labeled points, selecting the K closest neighbors, and taking a majority vote. Smaller K values can capture local details but be noisy, while larger K values create smoother, more stable decision behavior.</p>
+                <a class="learn-more-link" href="https://scikit-learn.org/stable/modules/neighbors.html#classification" target="_blank" rel="noopener noreferrer">Learn more</a>
+            </div>
+            <p style="color: #aaa;">The central star is a new point. Click classify to connect it to its nearest neighbors.</p>
+            <div id="plot"></div>
+            <div class="controls">
+                <label for="kInput">Set K Value:</label>
+                <input type="number" id="kInput" value="3" min="1" max="15">
+                <label for="targetXInput">Target X:</label>
+                <input type="number" id="targetXInput" value="5" min="0" max="10" step="0.1">
+                <label for="targetYInput">Target Y:</label>
+                <input type="number" id="targetYInput" value="5" min="0" max="10" step="0.1">
+                <button id="classifyBtn">Classify Center Point</button>
+                <button id="resetBtn">Reset</button>
+                <span id="status" style="margin-left: 1rem; color: #888;">Ready</span>
+            </div>
+        </div>
+    </main>
+    <script src="../js/algorithms/knn.js"></script>
+</body>
+
+</html>
+</file>
+
+<file path="public/algorithms/logistic-regression.html">
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Logistic Regression - ML Visualizer</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.15.0/dist/tf.min.js"></script>
+    <style>
+        .controls {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: var(--secondary-bg);
+            border-radius: 8px;
+        }
+
+        #plot {
+            width: 100%;
+            height: 500px;
+            background-color: var(--bg-color);
+        }
+    </style>
+</head>
+
+<body>
+    <aside class="sidebar">
+        <div class="brand">
+            <h1>ML_VIZ</h1>
+            <span class="version">v1.0</span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="/">Dashboard</a></li>
+            <li class="nav-header">Regression</li>
+            <li><a href="linear-regression.html">Linear Regression</a></li>
+            <li><a href="multiple-linear-regression.html">Multiple Regression</a></li>
+            <li class="nav-header">Classification</li>
+            <li><a href="logistic-regression.html" class="active">Logistic Regression</a></li>
+            <li><a href="knn.html">K-Nearest Neighbors</a></li>
+            <li><a href="naive-bayes.html">Naive Bayes</a></li>
+            <li><a href="svm.html">Support Vector Machine</a></li>
+            <li class="nav-header">Ensemble & Trees</li>
+            <li><a href="decision-tree.html">Decision Tree</a></li>
+            <li><a href="random-forest.html">Random Forest</a></li>
+            <li><a href="adaboost.html">AdaBoost</a></li>
+            <li class="nav-header">Clustering</li>
+            <li><a href="k-means.html">K-Means Clustering</a></li>
+            <li><a href="hierarchical-clustering.html">Hierarchical</a></li>
+        </ul>
+    </aside>
+    <main class="main-content">
+        <div class="card">
+            <h2>Logistic Regression (Binary Classification)</h2>
+            <div class="info-panel">
+                <h3>What is happening here?</h3>
+                <p>Logistic Regression outputs class probability using the sigmoid function, which maps any real-valued score into the range [0, 1]. The curve shown after training represents P(class = 1 | x), and a common decision rule is to predict class 1 when probability is at least 0.5.</p>
+                <a class="learn-more-link" href="https://scikit-learn.org/stable/modules/linear_model.html#logistic-regression" target="_blank" rel="noopener noreferrer">Learn more</a>
+            </div>
+            <div id="plot"></div>
+            <div class="controls">
+                <button id="trainBtn">Train Sigmoid Model</button>
+                <button id="resetBtn">Reset</button>
+                <label for="xInput" style="margin-left: 0.75rem;">X:</label>
+                <input type="number" id="xInput" value="5" step="0.1" style="width: 90px;">
+                <button id="predictBtn">Predict Class</button>
+                <span id="status" style="margin-left: 1rem; color: #888;">Ready</span>
+                <span id="loss" style="margin-left: 1rem;"></span>
+            </div>
+        </div>
+    </main>
+    <script src="../js/algorithms/logistic-regression.js"></script>
+</body>
+
+</html>
+</file>
+
+<file path="public/algorithms/random-forest.html">
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Random Forest - ML Visualizer</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <style>
+        .controls {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: var(--secondary-bg);
+            border-radius: 8px;
+        }
+
+        #plot {
+            width: 100%;
+            height: 500px;
+            background-color: var(--bg-color);
+        }
+    </style>
+</head>
+
+<body>
+    <aside class="sidebar">
+        <div class="brand">
+            <h1>ML_VIZ</h1>
+            <span class="version">v1.0</span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="/">Dashboard</a></li>
+            <li class="nav-header">Regression</li>
+            <li><a href="linear-regression.html">Linear Regression</a></li>
+            <li><a href="multiple-linear-regression.html">Multiple Regression</a></li>
+            <li class="nav-header">Classification</li>
+            <li><a href="logistic-regression.html">Logistic Regression</a></li>
+            <li><a href="knn.html">K-Nearest Neighbors</a></li>
+            <li><a href="naive-bayes.html">Naive Bayes</a></li>
+            <li><a href="svm.html">Support Vector Machine</a></li>
+            <li class="nav-header">Ensemble & Trees</li>
+            <li><a href="decision-tree.html">Decision Tree</a></li>
+            <li><a href="random-forest.html" class="active">Random Forest</a></li>
+            <li><a href="adaboost.html">AdaBoost</a></li>
+            <li class="nav-header">Clustering</li>
+            <li><a href="k-means.html">K-Means Clustering</a></li>
+            <li><a href="hierarchical-clustering.html">Hierarchical</a></li>
+        </ul>
+    </aside>
+    <main class="main-content">
+        <div class="card">
+            <h2>Random Forest Decision Boundaries</h2>
+            <div class="info-panel">
+                <h3>What is happening here?</h3>
+                <p>Random Forest combines predictions from many decision trees trained on varied samples and feature subsets. This ensemble voting reduces overfitting compared to a single tree, producing more reliable non-linear decision regions in the plot.</p>
+                <a class="learn-more-link" href="https://scikit-learn.org/stable/modules/ensemble.html#forest" target="_blank" rel="noopener noreferrer">Learn more</a>
+            </div>
+            <p style="color: #aaa;">Generate a heatmap-like boundary to mimic ensemble voting behavior from multiple trees.</p>
+            <div id="plot"></div>
+            <div class="controls">
+                <label for="treesInput">Trees:</label>
+                <input type="number" id="treesInput" value="25" min="5" max="101" step="2" style="width: 90px;">
+                <label for="depthInput">Depth:</label>
+                <input type="number" id="depthInput" value="4" min="1" max="8" step="1" style="width: 90px;">
+                <button id="renderBtn">Generate Ensemble Boundary</button>
+                <button id="resetBtn">Reset</button>
+                <span id="status" style="margin-left: 1rem; color: #888;">Ready</span>
+            </div>
+        </div>
+    </main>
+    <script src="../js/algorithms/random-forest.js"></script>
+</body>
+
+</html>
+</file>
+
+<file path="public/algorithms/linear-regression.html">
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <title>Linear Regression - ML Visualizer</title>
+    <link rel="stylesheet" href="../css/style.css">
+    <link href="https://fonts.googleapis.com/css2?family=Inter:wght@400;600&display=swap" rel="stylesheet">
+    <!-- Plotly.js -->
+    <script src="https://cdn.plot.ly/plotly-2.27.0.min.js"></script>
+    <!-- TensorFlow.js -->
+    <script src="https://cdn.jsdelivr.net/npm/@tensorflow/tfjs@4.15.0/dist/tf.min.js"></script>
+    <style>
+        .controls {
+            margin-top: 1rem;
+            padding: 1rem;
+            background: var(--secondary-bg);
+            border-radius: 8px;
+        }
+
+        #plot {
+            width: 100%;
+            height: 500px;
+            background-color: var(--bg-color);
+        }
+    </style>
+</head>
+
+<body>
+    <aside class="sidebar">
+        <div class="brand">
+            <h1>ML_VIZ</h1>
+            <span class="version">v1.0</span>
+        </div>
+        <ul class="nav-links">
+            <li><a href="/">Dashboard</a></li>
+            <li class="nav-header">Regression</li>
+            <li><a href="linear-regression.html" class="active">Linear Regression</a></li>
+            <li><a href="multiple-linear-regression.html">Multiple Regression</a></li>
+            <li class="nav-header">Classification</li>
+            <li><a href="logistic-regression.html">Logistic Regression</a></li>
+            <li><a href="knn.html">K-Nearest Neighbors</a></li>
+            <li><a href="naive-bayes.html">Naive Bayes</a></li>
+            <li><a href="svm.html">Support Vector Machine</a></li>
+            <li class="nav-header">Ensemble & Trees</li>
+            <li><a href="decision-tree.html">Decision Tree</a></li>
+            <li><a href="random-forest.html">Random Forest</a></li>
+            <li><a href="adaboost.html">AdaBoost</a></li>
+            <li class="nav-header">Clustering</li>
+            <li><a href="k-means.html">K-Means Clustering</a></li>
+            <li><a href="hierarchical-clustering.html">Hierarchical</a></li>
+        </ul>
+    </aside>
+    <main class="main-content">
+        <div class="card">
+            <h2>Linear Regression</h2>
+            <div class="info-panel">
+                <h3>What is happening here?</h3>
+                <p>Simple Linear Regression models the relationship between a single feature X and target Y using y = b0 + b1x. During training, the optimizer updates b0 and b1 to minimize Mean Squared Error, so the plotted line gradually aligns with the data trend.</p>
+                <a class="learn-more-link" href="https://scikit-learn.org/stable/modules/linear_model.html#ordinary-least-squares" target="_blank" rel="noopener noreferrer">Learn more</a>
+            </div>
+            <div id="plot"></div>
+            <div class="controls">
+                <button id="trainBtn">Start Training</button>
+                <button id="resetBtn">Reset</button>
+                <label for="xInput" style="margin-left: 0.75rem;">X:</label>
+                <input type="number" id="xInput" value="5" step="0.1" style="width: 90px;">
+                <button id="predictBtn">Predict Y</button>
+                <span id="status" style="margin-left: 1rem; color: #888;">Ready</span>
+                <span id="loss" style="margin-left: 1rem;"></span>
+            </div>
+        </div>
+    </main>
+    <script src="../js/algorithms/linear-regression.js"></script>
+</body>
+
+</html>
+</file>
+
+</files>
